@@ -55,14 +55,18 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 공격 딜레이 및 공격 횟수 초기화 *
-        if (gameManager.playerAttack < 1)   // 강공 후 딜레이
+        if (gameManager.playerAttack < 1)   // 강공 판별
         {
             attackTimer -= Time.deltaTime;
             if (attackTimer <= 0)
+            {
                 gameManager.playerAttack = 4;
+                attackTimer = 2;
+            }
         } else if (Time.deltaTime - preAttack >= 2) // 공격 지연 시 공격 횟수 초기화
         {
             gameManager.playerAttack = 4;
+            attackTimer = 2;
         }
 
         // 점프
