@@ -38,7 +38,7 @@ public class RepeatBG_Re : MonoBehaviour
         if(repeatflag == false) //한칸 나아갈 때까지는 움직이는거 한번만 하고 기다리기(startPos 새값을 넣어주면 안됨)
         {
             startPos = Camera.main.WorldToViewportPoint(this.transform.position); //현재 원경 뷰포트 좌표 구하기
-            startPos.x = 0f; //현재 뷰포트가 중앙에 있으니까 맨 왼쪽으로 시작 기준 잡기(이 값은 배경 크기에 따라 수정될 수 있어요..)
+            //startPos.x = 0f; //현재 뷰포트가 중앙에 있으니까 맨 왼쪽으로 시작 기준 잡기(이 값은 배경 크기에 따라 수정될 수 있어요..)
             posValue = startPos.x + 1f; //현재 원경에서 화면 한칸 오른쪽 띈 위치값
         }
 

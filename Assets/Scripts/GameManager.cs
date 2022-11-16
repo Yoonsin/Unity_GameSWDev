@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,28 @@ public class GameManager : MonoBehaviour
 
     public int playerHP = 4;
     public int playerAttack = 4;
+    private float startUiAlpha = 0.7f;
+    public GameObject startUiObj;
+    private Image startUi;
+
+
+    private void Awake()
+    {
+        startUi = startUiObj.GetComponent<Image>(); //ui 이미지 받아오기
+        startUi.color = new Color(0, 0, 0, startUiAlpha);
+        Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤 
+    }
+
+    public void startButtonDown()
+    {
+        /* Color color = startUi.color;
+         color.a = 0f;
+         startUi.color = color;*/
+
+        Time.timeScale = 1; //버튼 누르면 시간 활성화
+        startUiObj.SetActive(false); //스타트 ui 전부 비활성화 시키기
+
+    }
 
     // 플레이어 체력 관리
     public void HealthDown()
