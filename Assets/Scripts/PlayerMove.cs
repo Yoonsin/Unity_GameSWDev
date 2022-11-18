@@ -23,6 +23,7 @@ public class PlayerMove : MonoBehaviour
     private float damagedBgAlpha = 0;
     public GameObject Camera;
     Vector3 cameraOriginPos;
+    public bool isShaked = false; // 피격시 카메라 흔들림 여부 => cameraMove 스크립트에서 사용
 
     private float attackTimer = 2;      // 강공 후 딜레이
     private float preAttack = 2;        // 이전 공격 일정시간 후 공격횟수 초기화
@@ -207,11 +208,13 @@ public class PlayerMove : MonoBehaviour
         float timer = 0;
         while (timer <= duration)
         {
+            isShaked = true; //true면 cameraMove 에서 카메라가 플레이어 따라가는 코드 중지시키기. (cameraMove의 카메라 위치 변경 코드가 여기 코드를 덮고있어서 흔들림이 적용안돼기 때문)
             Camera.transform.localPosition = (Vector3)Random.insideUnitCircle * amount + cameraOriginPos;
 
             timer += Time.deltaTime;
             yield return null;
         }
+        isShaked = false;
         Camera.transform.localPosition = cameraOriginPos;
     }
 }
