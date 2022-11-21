@@ -48,7 +48,7 @@ public class RepeatBG_Re : MonoBehaviour
         ansPos.x = newPos;
         //ansPos.x += newPos; //시작 좌표에 + 계속 왼쪽으로 이동하는 x값 넣기
         this.transform.position = Camera.main.ViewportToWorldPoint(ansPos); //움직인 좌표는 뷰포트 좌표니까 이거 다시 월드좌표로 움직여서 넣기
-        Debug.Log(ansPos.x);
+        //Debug.Log(ansPos.x);
         repeatflag = true; //화면 한칸 넣는거 기다리기
 
         if (-(ansPos.x) > posValue) //만약 화면 한칸 분량 이상 나아간다면
