@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public PlayerMove player;
+    public EnemyMove enemy;
 
     //private bool isRunning = true;
     //public bool gameOver = false;
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
     // 플레이어 체력 관리
     public void HealthDown()
     {
-        playerHP--;
+        playerHP --;
 
         if (playerHP < 1)
         {

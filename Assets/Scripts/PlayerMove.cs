@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
+    public EnemyMove enemy;
 
     Rigidbody2D rigid;
     //CapsuleCollider2D capsuleCollider;
@@ -134,6 +135,12 @@ public class PlayerMove : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
+        {
+            damagedTimer = 1;
+            isDamaged = true;
+            OnDamaged(collision.transform.position);
+        }
+        if (collision.gameObject.tag == "Enemy_Attack")
         {
             damagedTimer = 1;
             isDamaged = true;
