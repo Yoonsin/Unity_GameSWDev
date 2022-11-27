@@ -26,8 +26,8 @@ public class PlayerMove : MonoBehaviour
     Vector3 cameraOriginPos;
     public bool isShaked = false; // 피격시 카메라 흔들림 여부 => cameraMove 스크립트에서 사용
 
-    private float attackTimer = 2;      // 강공 후 딜레이
-    private float preAttack = 2;        // 이전 공격 일정시간 후 공격횟수 초기화
+    public float attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
+    public bool isAttacking = false;
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
 
@@ -57,23 +57,22 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 공격 딜레이 및 공격 횟수 초기화 *
-        if (gameManager.playerAttack < 1)   // 강공 판별
+        if (attackTimer >= 0)
         {
+            //Debug.Log("attackTimer " + attackTimer);
             attackTimer -= Time.deltaTime;
-            if (attackTimer <= 0)
-            {
-                gameManager.playerAttack = 4;
-                attackTimer = 2;
-            }
-        } else if (Time.deltaTime - preAttack >= 2) // 공격 지연 시 공격 횟수 초기화
+        } else if (attackTimer > -1)    // 타이머 끝났고 초기값보다 클 때
         {
+
+            Debug.Log("playerAttack reset");
             gameManager.playerAttack = 4;
-            attackTimer = 2;
+            attackTimer = -1;
         }
 
         // 점프
         if ((Input.GetButtonDown("Jump") || Input.GetKeyDown("w") || Input.GetKeyDown("up")) && !anim.GetBool("isJumping"))
         {
+            isAttacking = false;
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
         }
@@ -91,15 +90,17 @@ public class PlayerMove : MonoBehaviour
         if (rigid.velocity.normalized.x == 0)
             anim.SetBool("isWalking", false);
         else
+        {
             anim.SetBool("isWalking", true);
+            isAttacking = false;
+        }
 
         // 공격 *
         if (Input.GetKeyDown(KeyCode.LeftControl) && !anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") && gameManager.playerAttack > 0)
         {
-            gameManager.AttackCntDown();
-            preAttack = Time.deltaTime;
+            isAttacking = true;
+            //Debug.Log("isAttacking " + isAttacking);
             anim.SetTrigger("Attack");
-            Debug.Log("player move " + gameManager.playerAttack);
         }
 
         // 상호작용
@@ -115,7 +116,7 @@ public class PlayerMove : MonoBehaviour
         // 이동 left, a: -1 / right, d: 1 / 안 움직이거나 양쪽 다 누를 때: 0
         float key = Input.GetAxisRaw("Horizontal");
         // x축 이동은 x * speed로, y축 이동은 기존의 속력 값(현재는 중력)
-        if (gameObject.layer != 8)  // 피격시 반동을 위해서 제어할 수 없게 함
+        if (gameObject.layer != 9)  // 피격시 반동을 위해서 제어할 수 없게 함
             rigid.velocity = new Vector2(key * speed, rigid.velocity.y);
 
         // Landing Platform, 레이 캐스트
@@ -156,7 +157,7 @@ public class PlayerMove : MonoBehaviour
             return;
 
         // 레이어 변경
-        gameObject.layer = 8;   // PlayerDamaged 레이어 (플레이어 무적 레이어)
+        gameObject.layer = 9;   // PlayerDamaged 레이어 (플레이어 무적 레이어)
 
         // 배경 이펙트
         StartCoroutine(Shake(0.2f, 0.15f));
@@ -178,13 +179,13 @@ public class PlayerMove : MonoBehaviour
     {
         // 플레이어 이펙트
         spriteRenderer.color = new Color(1, 1, 1, 1);   // 투명도 조절
-        gameObject.layer = 7;   // 레이어 변경: Player 
+        gameObject.layer = 8;   // 레이어 변경: Player 
     }
 
     public void OnDie()
     {
         // 죽음 이펙트
-        gameObject.layer = 8;   // PlayerDamaged 레이어
+        gameObject.layer = 9;   // PlayerDamaged 레이어
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         Invoke("Respawn", 2);   // 2초 후 리스폰
@@ -195,7 +196,7 @@ public class PlayerMove : MonoBehaviour
         // 플레이어 원위치
         spriteRenderer.flipX = false;
         gameObject.transform.position = new Vector3(-5, -3, -1);
-        gameObject.layer = 7;   // Player 레이어
+        gameObject.layer = 8;   // Player 레이어
         spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 

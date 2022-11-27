@@ -20,7 +20,7 @@ public class EnemyMove : MonoBehaviour
     GameObject traceTarget;
 
     int nextMove;
-    int enemyHP = 5;
+    public int enemyHP = 5; // 수정: private으로 바꾸기
     public int enemyAD = 1;
     int movementFlag = 0;
     int StrongAD = 0;
@@ -33,6 +33,7 @@ public class EnemyMove : MonoBehaviour
         scanCollider = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
     }
 
     // Start is called before the first frame update
@@ -47,6 +48,7 @@ public class EnemyMove : MonoBehaviour
         spriteRenderer.flipX = nextMove == 1;
 
     }
+
     IEnumerator ChangeMovement()
     {
         if (ppos_x.x > spos_x.x + 2)
@@ -65,32 +67,53 @@ public class EnemyMove : MonoBehaviour
 
         StartCoroutine("ChangeMovement");
     }
+
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log("Collision");
-        if (collision.gameObject.tag == "Weapon")
+        // 레이어 검사 때문에 Update에서 수행
+        if (gameObject.layer != 7)  // 쇼크 상태가 아니면 움직여라
+            Move();
+        else // 쇼크 상태이면 멈춰라
         {
-            Debug.Log("Enemy Attacked");
-            OnDamaged();
+            anim.SetBool("is_Walking", false);
+            rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
     }
 
     public void OnDamaged()
     {
         enemyHP--;
+        gameManager.AttackCntDown();
+        if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기
+        {
+            enemyHP -= 1;   // 강공 추가 데미지
+            OnShocked();
+            player.attackTimer = 3;
+        }
+        else                                // 일반 공격 시 2초동안 공격 없으면 공격 횟수 초기화
+        {
+            player.attackTimer = 2;
+        }
+        Debug.Log("player attacked " + gameManager.playerAttack);
         rigid.AddForce(Vector2.up * 3, ForceMode2D.Impulse);
         Debug.Log("Enemy HP: " + enemyHP);
         if (enemyHP < 1)
         {
             rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-            Invoke("OnDie", 3);
+            Invoke("OnDie", 1.5f);
         }
+    }
+    private void OnShocked()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);    // 적 투명도 조절
+        gameObject.layer = 7;                  // 레이어 변경: shockedEnemy
+        Invoke("OffShocked", 2.0f);                         // 2초 후에 쇼크 상태 해제
+    }
+    private void OffShocked()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+        gameObject.layer = 6;
     }
 
     private void OnDie()
@@ -101,7 +124,6 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
     }
 
     void Move() // 적 이동
