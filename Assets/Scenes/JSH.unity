@@ -507,7 +507,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &740207844
 Transform:
   m_ObjectHideFlags: 0
@@ -765,7 +765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1967092493}
-  enemy: {fileID: 1782198820}
+  enemy: {fileID: 0}
   jumpPower: 20
   damagedBg: {fileID: 1718180356}
   Camera: {fileID: 248134857}
@@ -1232,7 +1232,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -1713,7 +1713,6 @@ MonoBehaviour:
   player: {fileID: 0}
   movePower: 1
   enemyAD: 1
-  isDamaged: 0
 --- !u!70 &1782198821
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1942,7 +1941,7 @@ MonoBehaviour:
   player: {fileID: 774494278}
   enemy: {fileID: 0}
   playerHP: 4
-  playerAttack: 4
+  playerAttack: 3
   startUiObj: {fileID: 1260407625}
 --- !u!4 &1967092494
 Transform:
