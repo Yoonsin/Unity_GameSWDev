@@ -8,7 +8,7 @@ public class EnemyMove : MonoBehaviour
     public PlayerMove player;
     public float movePower = 1f;
     Rigidbody2D rigid;
-    CapsuleCollider2D enemyCollider;
+    public CapsuleCollider2D enemyCollider;
     BoxCollider2D scanCollider;
     Vector3 spos_x;
     Vector3 ppos_x;
@@ -25,6 +25,8 @@ public class EnemyMove : MonoBehaviour
     int movementFlag = 0;
     int StrongAD = 0;
     float attackDelay = 2;
+
+    public bool isDamaged = false;
 
     void Awake()
     {
@@ -68,15 +70,20 @@ public class EnemyMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (isDamaged)
+        {
+            Debug.Log("Update: Enemy Damaged");
+            isDamaged = false;
+            OnDamaged();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Collision");
         if (collision.gameObject.tag == "Weapon")
         {
-            Debug.Log("Enemy Attacked");
+            Debug.Log("OnCollisionEnter2D: Enemy Damaged");
+            isDamaged = false;
             OnDamaged();
         }
     }

@@ -99,7 +99,7 @@ public class PlayerMove : MonoBehaviour
             gameManager.AttackCntDown();
             preAttack = Time.deltaTime;
             anim.SetTrigger("Attack");
-            Debug.Log("player move " + gameManager.playerAttack);
+            Debug.Log("player attacked " + gameManager.playerAttack);
         }
 
         // 상호작용
@@ -145,6 +145,15 @@ public class PlayerMove : MonoBehaviour
             damagedTimer = 1;
             isDamaged = true;
             OnDamaged(collision.transform.position);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("collision " + collision);
+        if (collision.gameObject.tag == "Enemy" && collision == UnityEngine.CapsuleCollider2D)
+        {
+            Debug.Log("Player Attacked Enemy");
+            enemy.isDamaged = true;
         }
     }
 
