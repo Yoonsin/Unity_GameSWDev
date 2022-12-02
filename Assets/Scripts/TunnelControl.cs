@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Rendering.Universal;
 public class TunnelControl : MonoBehaviour
 {
     private bool state;
 
+    Light2D light;
+
     void Start()
     {
-        state = true;
+        light = GetComponentInChildren<Light2D>();
         Invoke("TurnOn", 3);
     }
 
@@ -20,17 +22,17 @@ public class TunnelControl : MonoBehaviour
 
     void TurnOn()
     {
-        gameObject.SetActive(false);
-        state = false;
         Debug.Log("터널 입장");
+        light.color = Color.black;
         Invoke("TurnOff", 5);
+
+        
     }
 
     void TurnOff()
     {
-        gameObject.SetActive(true);
-        state = true;
         Debug.Log("터널 퇴장");
+        light.color = Color.white;
         Invoke("TurnOn", 10);
     }
 }
