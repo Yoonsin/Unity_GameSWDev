@@ -39,6 +39,7 @@ public class EnemyMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.tag = "Enemy_Attack";
         spos_x = this.gameObject.transform.position;
         StartCoroutine("ChangeMovement");
         nextMove = Random.Range(-1, 1);
@@ -167,7 +168,7 @@ public class EnemyMove : MonoBehaviour
         if(attackDelay < 0) attackDelay = 0;
         if (isAttack && StrongAD == 0)
         {
-
+            
         }
         else if(isAttack && StrongAD == 1)
         {

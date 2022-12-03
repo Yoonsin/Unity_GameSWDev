@@ -149,7 +149,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    private void OnDamaged(Vector2 targetPos)
+    public void OnDamaged(Vector2 targetPos)
     {
         // 체력 감소
         gameManager.HealthDown();
