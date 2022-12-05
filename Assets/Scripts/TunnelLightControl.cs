@@ -1,35 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TunnelLightControl : MonoBehaviour
 {
-    public bool states = false;
     public TunnelControl tunnel;
+    private bool states = false;
     private Transform lighting;
 
     void Start()
     {
-        //LightTurnOff();
-        lighting = GameObject.Find("Light_parent").transform.Find("Light");
+        lighting = GameObject.Find("Light_Parent").transform.Find("Light");
     }
 
 
     void Update()
     {
-        if(tunnel.Tun == true && states == false)
+        if (tunnel.Tun == true && states == true)
         {
-            GameObject.Find("Light_parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
-            states = true;
+            GameObject.Find("Light_Parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
+            states = false;
             Debug.Log("조명 on");
         }
-        else if(tunnel.Tun == false && states == true)
+        else if (tunnel.Tun == false && states == false)
         {
             lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
-            states = false;
+            states = true;
             Debug.Log("조명 off");
-            
         }
     }
 }

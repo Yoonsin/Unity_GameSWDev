@@ -4,12 +4,9 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 public class TunnelControl : MonoBehaviour
 {
-    public TunnelLightControl TunnelLight;
-
-    private bool state;
     public bool Tun = false;
 
-    Light2D light; // 2D light 추가
+    Light2D light;
 
     void Start()
     {
@@ -27,17 +24,15 @@ public class TunnelControl : MonoBehaviour
     {
         Debug.Log("터널 입장");
         Tun = true;
-        light.color = Color.black; // 글로벌 라이트 검은색
+        light.color = Color.black;
         Invoke("TurnOff", 5);
-
-        
     }
 
     void TurnOff()
     {
         Debug.Log("터널 퇴장");
         Tun = false;
-        light.color = Color.white; // 글로벌 라이트 흰색
+        light.color = Color.white;
         Invoke("TurnOn", 10);
     }
 }

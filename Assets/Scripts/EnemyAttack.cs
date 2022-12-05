@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class EnemyAttack : EnemyMove
 {
-    public PlayerMove player;
-    public EnemyMove enemy;
-
+    // Start is called before the first frame update
     void Start()
     {
         
