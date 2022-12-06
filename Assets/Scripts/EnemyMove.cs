@@ -6,6 +6,10 @@ public class EnemyMove : MonoBehaviour
 {
     public GameManager gameManager;
     public PlayerMove player;
+    public TunnelControl tunnel;
+    public InteractiveObject InterOb;
+    public TunnelLightControl tunnelL;
+
     public float movePower = 1f;
     Rigidbody2D rigid;
     CapsuleCollider2D enemyCollider;
@@ -18,22 +22,28 @@ public class EnemyMove : MonoBehaviour
     bool isTracing = false;
     bool isAttack = false;
     GameObject traceTarget;
+    private Transform scan;
 
     int nextMove;
     public int enemyHP = 5; // 수정: private으로 바꾸기
     public int enemyAD = 1;
     int movementFlag = 0;
-    int StrongAD = 0;
-    float attackDelay = 2;
+
+    float timer;        // 딜레이
+    float waitingTime;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         enemyCollider = GetComponent<CapsuleCollider2D>();
         scanCollider = GetComponent<BoxCollider2D>();
+        scan = GameObject.Find("Enemy").transform.Find("EnemyAI");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
+        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
+        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
     }
 
     // Start is called before the first frame update
@@ -46,6 +56,8 @@ public class EnemyMove : MonoBehaviour
             nextMove = 1;
         anim.SetBool("is_Walking", true);
         spriteRenderer.flipX = nextMove == 1;
+        timer = 0.0f;
+        waitingTime = 0.5f;
 
     }
 
@@ -79,7 +91,16 @@ public class EnemyMove : MonoBehaviour
             anim.SetBool("is_Walking", false);
             rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
+        if (tunnel.Tun == false)
+        {
+            GameObject.Find("Enemy").transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
+        }
+        else if(tunnel.Tun == true)
+        {
+            scan.gameObject.SetActive(false);// 스캔 콜라이더 비활성화
+        }
     }
+
 
     public void OnDamaged()
     {
@@ -124,6 +145,33 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        // 적이 눈앞에 있는지 확인
+        Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
+
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 1, LayerMask.GetMask("Player"));
+        timer += Time.deltaTime;
+        if (timer > waitingTime)
+        {
+            if (rayHit.collider != null && rayHit.collider.tag == "Player")
+            {
+                Debug.Log(rayHit.collider.tag);
+                anim.SetBool("is_Attack", true);
+                EnemyAttack();
+            }
+            else
+            {
+                Debug.Log("범위에 없음");
+                anim.SetBool("is_Attack", false);
+            }
+            timer = 0;
+        }
+
+
+    }
+    public void EnemyAttack()
+    {
+        Debug.Log("Player Attack!!");
+        player.OnDamaged(rigid.transform.position);
     }
 
     void Move() // 적 이동
@@ -160,28 +208,7 @@ public class EnemyMove : MonoBehaviour
             rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
         }
     }
-
-    void Attack(Collider2D other)
-    {
-        attackDelay -= Time.deltaTime;
-        if(attackDelay < 0) attackDelay = 0;
-        if (isAttack && StrongAD == 0)
-        {
-
-        }
-        else if(isAttack && StrongAD == 1)
-        {
-            enemyAD = 2;
-
-            enemyAD = 1;
-        }
-        else
-        {
-            StrongAD = 0;
-
-        }
-
-    }
+   
 
     // 플레이어 탐지
     void OnTriggerEnter2D(Collider2D other)

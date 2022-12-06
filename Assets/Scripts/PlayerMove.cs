@@ -123,14 +123,10 @@ public class PlayerMove : MonoBehaviour
         if (tunnel.Tun == true && tunnelL.states == true && InterOb.trigger == false)
         {
             GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
-            //tunnelL.states = false;
-            Debug.Log("player조명 on");
         }
         else if(tunnelL.states == true)
         {
             playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
-            //tunnelL.states = true;
-            Debug.Log("player조명 off");
         }
     }
 
@@ -173,7 +169,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    private void OnDamaged(Vector2 targetPos)
+    public void OnDamaged(Vector2 targetPos)
     {
         // 체력 감소
         gameManager.HealthDown();
