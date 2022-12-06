@@ -227,7 +227,6 @@ public class EnemyMove : MonoBehaviour
             isTracing = true;
             isAttack = true;
             anim.SetBool("is_Walking", true);
-            anim.SetBool("is_Attack", true);
         }
     }
 
@@ -236,7 +235,6 @@ public class EnemyMove : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             isTracing = false;
-            isAttack = false;
             StartCoroutine("ChangeMovement");
         }
     }
