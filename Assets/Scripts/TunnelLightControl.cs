@@ -7,7 +7,7 @@ public class TunnelLightControl : MonoBehaviour
     public TunnelControl tunnel;
     public InteractiveObject InterOb;
 
-    private bool states = false;
+    public bool states = false;
 
     private Transform lighting;
 

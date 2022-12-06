@@ -6,7 +6,7 @@ public class InteractiveObject : MonoBehaviour
 {
     public PlayerMove player;
     
-    public bool trigger;
+    public bool trigger = false;
 
 
     void Start()

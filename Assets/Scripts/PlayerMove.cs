@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.VersionControl.Asset;
 
 public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
     public EnemyMove enemy;
+    public TunnelControl tunnel;
+    public InteractiveObject InterOb;
+    public TunnelLightControl tunnelL;
 
     Rigidbody2D rigid;
     //CapsuleCollider2D capsuleCollider;
@@ -18,6 +22,8 @@ public class PlayerMove : MonoBehaviour
 
     private bool isDamaged = false;       // 피격 상태 판별
     private float damagedTimer = 1;       // 피격 상태 지속 시간
+
+    private Transform playerLight;      // 플레이어 조명
 
     // 피격 이펙트
     public Image damagedBg;
@@ -38,6 +44,10 @@ public class PlayerMove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
+        playerLight = GameObject.Find("Player").transform.Find("Player_light");
+        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
+        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
     }
 
     // 매 프레임 호출. 주로 단발적 이벤트.
@@ -107,6 +117,20 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftAlt) && interactiveObject)
         {
             interactiveObject.Interaction();
+        }
+
+        // 플레이어 조명(터널에서 스위치 못 올렸을 때만 켜지기)
+        if (tunnel.Tun == true && tunnelL.states == true && InterOb.trigger == false)
+        {
+            GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
+            //tunnelL.states = false;
+            Debug.Log("player조명 on");
+        }
+        else if(tunnelL.states == true)
+        {
+            playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
+            //tunnelL.states = true;
+            Debug.Log("player조명 off");
         }
     }
 
