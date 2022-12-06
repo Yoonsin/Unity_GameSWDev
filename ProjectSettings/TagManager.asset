@@ -8,6 +8,7 @@ TagManager:
   - InteractiveObject
   - Weapon
   - Enemy_Attack
+  - Switch
   layers:
   - Default
   - TransparentFX

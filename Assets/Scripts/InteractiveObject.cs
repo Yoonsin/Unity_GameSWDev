@@ -5,11 +5,20 @@ using UnityEngine;
 public class InteractiveObject : MonoBehaviour
 {
     public PlayerMove player;
+    
+    public bool trigger;
+
+
+    void Start()
+    {
+        
+    }
 
     // 상호작용 시 수행
     public void Interaction()
     {
         Debug.Log("상호작용 성공: " + gameObject.name);
+        trigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -17,7 +26,6 @@ public class InteractiveObject : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             player.interactiveObject = this;
-            transform.Find("Interactive Mark").gameObject.SetActive(true);
         }
     }
 
@@ -26,7 +34,6 @@ public class InteractiveObject : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             player.interactiveObject = null;
-            transform.Find("Interactive Mark").gameObject.SetActive(false);
         }
     }
 }
