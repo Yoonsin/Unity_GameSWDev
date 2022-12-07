@@ -28,9 +28,13 @@ public class EnemyMove : MonoBehaviour
     public int enemyHP = 5; // 수정: private으로 바꾸기
     public int enemyAD = 1;
     int movementFlag = 0;
+    int AttackStack; // 강격
 
     float timer;        // 딜레이
     float waitingTime;
+
+    float Stimer;       // 강격 딜레이
+    float SwaitingTime;
 
     void Awake()
     {
@@ -58,6 +62,9 @@ public class EnemyMove : MonoBehaviour
         spriteRenderer.flipX = nextMove == 1;
         timer = 0.0f;
         waitingTime = 0.5f;
+        AttackStack = 0;
+        Stimer = 0.0f;
+        SwaitingTime = 0.8f;
 
     }
 
@@ -150,13 +157,25 @@ public class EnemyMove : MonoBehaviour
 
         RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 1, LayerMask.GetMask("Player"));
         timer += Time.deltaTime;
-        if (timer > waitingTime)
+        if (timer > waitingTime) // 일반공격
         {
             if (rayHit.collider != null && rayHit.collider.tag == "Player")
             {
                 Debug.Log(rayHit.collider.tag);
                 anim.SetBool("is_Attack", true);
-                EnemyAttack();
+                
+                if (AttackStack == 1) // 강격
+                {
+                    //EnemyStrongAttack();
+                    Invoke("EnemyStrongAttack", SwaitingTime);
+                    AttackStack = 0;
+                }
+                else
+                {
+                    EnemyAttack();
+                    AttackStack += 1;
+                    Debug.Log(AttackStack);
+                }
             }
             else
             {
@@ -165,13 +184,18 @@ public class EnemyMove : MonoBehaviour
             }
             timer = 0;
         }
-
-
     }
     public void EnemyAttack()
     {
         Debug.Log("Player Attack!!");
         player.OnDamaged(rigid.transform.position);
+
+    }
+    public void EnemyStrongAttack()
+    {
+        Debug.Log("Player StrongAttack!!");
+        player.OnDamaged(rigid.transform.position);
+
     }
 
     void Move() // 적 이동
