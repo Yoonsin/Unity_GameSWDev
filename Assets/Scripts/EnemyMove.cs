@@ -31,6 +31,7 @@ public class EnemyMove : MonoBehaviour
     int AttackStack; // 강격
     [SerializeField]
     bool preStrongAttack = false; // 강공 준비 시간
+    bool AttackScan = false;
 
     float timer;        // 딜레이
     float waitingTime;
@@ -104,13 +105,15 @@ public class EnemyMove : MonoBehaviour
             anim.SetBool("is_Walking", false);
             rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
-        if (tunnel.Tun == false)
+        if (tunnel.Tun == false) // 적 AI OnOff
         {
             GameObject.Find("Enemy").transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
+            AttackScan = true;
         }
-        else if(tunnel.Tun == true)
+        else if(tunnel.Tun == true && tunnelL.states == false)
         {
             scan.gameObject.SetActive(false);// 스캔 콜라이더 비활성화
+            AttackScan = false;
         }
     }
 
@@ -170,12 +173,12 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 적이 눈앞에 있는지 확인
+        // 플레이어가 눈앞에 있는지 확인
         rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
         // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
         timer += Time.deltaTime;
-        if (timer > waitingTime) // 일반공격
+        if (timer > waitingTime && AttackScan == true) // 일반공격
         {
             if (rayHit.collider != null && rayHit.collider.tag == "Player")
             {

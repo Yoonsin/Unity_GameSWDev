@@ -128,11 +128,11 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 플레이어 조명(터널에서 스위치 못 올렸을 때만 켜지기)
-        if (tunnel.Tun == true && tunnelL.states == true && InterOb.trigger == false)
+        if (tunnel.Tun == true && tunnelL.states == false && InterOb.trigger == true)
         {
             GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
         }
-        else if(tunnelL.states == true)
+        else if(tunnel.Tun == false || tunnelL.states == false)
         {
             playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
         }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.VersionControl.Asset;
 
 public class TunnelLightControl : MonoBehaviour
 {
@@ -22,15 +23,15 @@ public class TunnelLightControl : MonoBehaviour
     {
         if (tunnel.Tun == true && states == true && InterOb.trigger == true)
         {
-            GameObject.Find("Light_Parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
+            lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
             states = false;
-            Debug.Log("조명 on");
+            Debug.Log("조명 off");
         }
         else if (tunnel.Tun == false && states == false)
         {
-            lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
+            GameObject.Find("Light_Parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
             states = true;
-            Debug.Log("조명 off");
+            Debug.Log("조명 on");
         }
     }
 }
