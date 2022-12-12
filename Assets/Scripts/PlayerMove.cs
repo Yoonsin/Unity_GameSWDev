@@ -7,7 +7,6 @@ using static UnityEditor.VersionControl.Asset;
 public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
-    public EnemyMove enemy;
     public TunnelControl tunnel;
     public InteractiveObject InterOb;
     public TunnelLightControl tunnelL;
@@ -34,6 +33,7 @@ public class PlayerMove : MonoBehaviour
 
     public float attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
     public bool isAttacking = false;
+    public bool isInterrupting = false; // 반격을 시도했는지 확인
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
 
@@ -110,6 +110,14 @@ public class PlayerMove : MonoBehaviour
         {
             isAttacking = true;
             //Debug.Log("isAttacking " + isAttacking);
+            anim.SetTrigger("Attack");
+        }
+        // 반격
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Debug.Log("Z Pressed");
+            isInterrupting = true;
+            //Debug.Log("반격 시도");
             anim.SetTrigger("Attack");
         }
 
@@ -216,6 +224,7 @@ public class PlayerMove : MonoBehaviour
         // 플레이어 원위치
         spriteRenderer.flipX = false;
         gameObject.transform.position = new Vector3(-5, -3, -1);
+        gameManager.playerHP = 4;
         gameObject.layer = 8;   // Player 레이어
         spriteRenderer.color = new Color(1, 1, 1, 1);
     }

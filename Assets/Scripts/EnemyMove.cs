@@ -29,12 +29,16 @@ public class EnemyMove : MonoBehaviour
     public int enemyAD = 1;
     int movementFlag = 0;
     int AttackStack; // 강격
+    [SerializeField]
+    bool preStrongAttack = false; // 강공 준비 시간
 
     float timer;        // 딜레이
     float waitingTime;
 
     float Stimer;       // 강격 딜레이
     float SwaitingTime;
+
+    RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
     void Awake()
     {
@@ -64,9 +68,9 @@ public class EnemyMove : MonoBehaviour
         waitingTime = 0.5f;
         AttackStack = 0;
         Stimer = 0.0f;
-        SwaitingTime = 0.8f;
-
-    }
+        SwaitingTime = 3.0f;    // 원래 0.8f
+        preStrongAttack = false; // 강공 준비 시간
+}
 
     IEnumerator ChangeMovement()
     {
@@ -90,6 +94,8 @@ public class EnemyMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player.isInterrupting == true)
+            OnInterrupt();
         // 레이어 검사 때문에 Update에서 수행
         if (gameObject.layer != 7)  // 쇼크 상태가 아니면 움직여라
             Move();
@@ -108,12 +114,24 @@ public class EnemyMove : MonoBehaviour
         }
     }
 
+    public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
+    {
+        player.isInterrupting = false;
+        Debug.Log("OnInterrupt()");
+        if (preStrongAttack == true)
+        {
+            Debug.Log("반격 성공!");
+            OnShocked();
+            enemyHP = 0;
+            OnDie();
+        }
+    }
 
     public void OnDamaged()
     {
         enemyHP--;
         gameManager.AttackCntDown();
-        if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기
+        if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
         {
             enemyHP -= 1;   // 강공 추가 데미지
             OnShocked();
@@ -153,9 +171,9 @@ public class EnemyMove : MonoBehaviour
     void FixedUpdate()
     {
         // 적이 눈앞에 있는지 확인
+        rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
+        // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
-
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 1, LayerMask.GetMask("Player"));
         timer += Time.deltaTime;
         if (timer > waitingTime) // 일반공격
         {
@@ -166,20 +184,21 @@ public class EnemyMove : MonoBehaviour
                 
                 if (AttackStack == 1) // 강격
                 {
+                    Debug.Log("강격 준비 시작!");
+                    preStrongAttack = true;     // 강공 대기 시작
                     //EnemyStrongAttack();
                     Invoke("EnemyStrongAttack", SwaitingTime);
-                    AttackStack = 0;
                 }
-                else
+                else if (AttackStack == 0)
                 {
                     EnemyAttack();
                     AttackStack += 1;
-                    Debug.Log(AttackStack);
+                    Debug.Log("AttackStack: " + AttackStack);
                 }
             }
             else
             {
-                Debug.Log("범위에 없음");
+                //Debug.Log("범위에 없음");
                 anim.SetBool("is_Attack", false);
             }
             timer = 0;
@@ -193,8 +212,12 @@ public class EnemyMove : MonoBehaviour
     }
     public void EnemyStrongAttack()
     {
+
+        Debug.Log("강격 준비 끝!");
+        preStrongAttack = false;    // 강공 대기 종료
         Debug.Log("Player StrongAttack!!");
         player.OnDamaged(rigid.transform.position);
+        AttackStack = 0;
 
     }
 
