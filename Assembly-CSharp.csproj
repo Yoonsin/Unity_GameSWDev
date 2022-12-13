@@ -66,8 +66,8 @@
     <Compile Include="Assets\Scripts\EnemyMove.cs" />
     <Compile Include="Assets\CubeScript.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\EnemyAttack.cs" />
     <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
+    <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Images\NewSurfaceShader.shader" />
