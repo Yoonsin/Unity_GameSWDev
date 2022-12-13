@@ -121,10 +121,9 @@ public class EnemyMove : MonoBehaviour
     {
         player.isInterrupting = false;
         Debug.Log("OnInterrupt()");
-        if (preStrongAttack == true)
+        if (rayHit.collider != null && rayHit.collider.tag == "Player" && (preStrongAttack == true || tunnel.Tun == true))
         {
             Debug.Log("반격 성공!");
-            OnShocked();
             enemyHP = 0;
             OnDie();
         }
@@ -137,7 +136,8 @@ public class EnemyMove : MonoBehaviour
         if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
         {
             enemyHP -= 1;   // 강공 추가 데미지
-            OnShocked();
+            if (!preStrongAttack)
+                OnShocked();
             player.attackTimer = 3;
         }
         else                                // 일반 공격 시 2초동안 공격 없으면 공격 횟수 초기화
@@ -188,7 +188,7 @@ public class EnemyMove : MonoBehaviour
                 if (AttackStack == 1) // 강격
                 {
                     Debug.Log("강격 준비 시작!");
-                    preStrongAttack = true;     // 강공 대기 시작
+                    preStrongAttack = true;     // 강공 준비 시작
                     //EnemyStrongAttack();
                     Invoke("EnemyStrongAttack", SwaitingTime);
                 }
@@ -217,7 +217,7 @@ public class EnemyMove : MonoBehaviour
     {
 
         Debug.Log("강격 준비 끝!");
-        preStrongAttack = false;    // 강공 대기 종료
+        preStrongAttack = false;    // 강공 준비 종료
         Debug.Log("Player StrongAttack!!");
         player.OnDamaged(rigid.transform.position);
         AttackStack = 0;
