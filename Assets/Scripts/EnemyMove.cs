@@ -200,7 +200,8 @@ public class EnemyMove : MonoBehaviour
     void FixedUpdate()
     {
         // 플레이어가 눈앞에 있는지 확인
-        rayHit = Physics2D.Raycast(rigid.position, direction, 3, LayerMask.GetMask("Player"));
+        if (!attackReady)
+            rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
         // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
         timer += Time.deltaTime;
