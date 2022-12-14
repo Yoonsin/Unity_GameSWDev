@@ -14,7 +14,7 @@ public class PlayerMove : MonoBehaviour
     Rigidbody2D rigid;
     //CapsuleCollider2D capsuleCollider;
     SpriteRenderer spriteRenderer;
-    Animator anim;
+    public Animator anim;
 
     private float speed = 7.0f;     // 이동 속도
     public float jumpPower;         // 점프력
@@ -183,18 +183,23 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        /*
+        // 몸빵 코드
         if (collision.gameObject.tag == "Enemy")
         {
             damagedTimer = 1;
             isDamaged = true;
             OnDamaged(collision.transform.position);
         }
+        */
+        // 적 공격 코드
         if (collision.gameObject.tag == "Enemy_Attack")
         {
             damagedTimer = 1;
             isDamaged = true;
             OnDamaged(collision.transform.position);
         }
+        
     }
 
     public void OnDamaged(Vector2 targetPos)

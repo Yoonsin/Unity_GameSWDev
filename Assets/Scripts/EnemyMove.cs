@@ -143,22 +143,31 @@ public class EnemyMove : MonoBehaviour
                 preStimer -= Time.deltaTime;  // 타이머 발동
             }
         }
-    }
 
-    public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
-    {
-        player.isInterrupting = false;
-        Debug.Log("OnInterrupt()" + (rayHit.collider != null && rayHit.collider.tag == "Player"));
-        if (touchedSword && (canCounterattack == true || tunnel.Tun == true))
+        if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword)
+        {
+            Debug.Log("반격 중 적 강공");
+            OnShocked();
+        }
+        else if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword)
         {
             Debug.Log("반격 성공!");
-            player.GetComponent<Animator>().SetBool("isCounter", true); //플레이어 카운터 애니 재생
             //false는 PlayerMove 컴포넌트의 endCounter()에서 실행
             //player.GetComponent<Animator>().SetTrigger("isCounter");
             canCounterattack = false;
             preStimer = SwaitingTime / 2.0f;
             enemyHP = 0;
             OnDie();
+        }
+    }
+
+    public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
+    {
+        player.isInterrupting = false;
+        Debug.Log("OnInterrupt() " + canCounterattack);
+        if (touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
+        {
+            player.anim.SetBool("isCounter", true); //플레이어 카운터 애니 재생
         }
 
     }
@@ -192,6 +201,7 @@ public class EnemyMove : MonoBehaviour
     }
     private void OnShocked()
     {
+        Debug.Log("적: 으악!");
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);    // 적 투명도 조절
         gameObject.layer = 7;                  // 레이어 변경: shockedEnemy
         Invoke("OffShocked", 2.0f);                         // 2초 후에 쇼크 상태 해제
