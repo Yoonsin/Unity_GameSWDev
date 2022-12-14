@@ -36,6 +36,7 @@ public class PlayerMove : MonoBehaviour
     public bool isInterrupting = false; // 반격을 시도했는지 확인
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
+    int combo = 1;
 
     void Awake()
     {
@@ -90,10 +91,10 @@ public class PlayerMove : MonoBehaviour
         // 방향 전환
         if (Input.GetAxisRaw("Horizontal") < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);   // Left flip
+            transform.localScale = new Vector3(3, 3, 3);   // Left flip
         } else if (Input.GetAxisRaw("Horizontal") > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1);   // Left flip
+            transform.localScale = new Vector3(-3, 3, 3);   // Left flip
         }
 
         // 걷기 애니메이션
@@ -102,21 +103,22 @@ public class PlayerMove : MonoBehaviour
         else
         {
             anim.SetBool("isWalking", true);
-            isAttacking = false;
+            
         }
 
         // 공격 *
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") && gameManager.playerAttack > 0)
+        if (Input.GetKeyDown(KeyCode.LeftControl)  && gameManager.playerAttack > 0)
         {
             isAttacking = true;
-            //Debug.Log("isAttacking " + isAttacking);
-            anim.SetTrigger("Attack");
+            //Debug.Log(""+combo);
+            anim.SetTrigger(""+combo);
+            
         }
         // 반격
         if (Input.GetKeyDown(KeyCode.Z))
         {
             isInterrupting = true;
-            anim.SetTrigger("Attack");
+            
         }
 
         // 상호작용
@@ -134,6 +136,26 @@ public class PlayerMove : MonoBehaviour
         {
             playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
         }
+    }
+
+    public void StartCombo()
+    {
+        isAttacking = true;
+        if (combo < 5)
+        {
+            combo++;
+        }
+    }
+
+    public void FinishAni()
+    {
+        isAttacking = false;
+        combo = 1;
+    }
+
+    public void endCounter()
+    {
+        anim.SetBool("isCounter", false); //플레이어 카운터 애니 중지
     }
 
     // 주로 지속적 이벤트.
@@ -192,7 +214,7 @@ public class PlayerMove : MonoBehaviour
         StartCoroutine("reduceDamagedBg");
 
         // 플레이어 투명도 조절
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        //spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         // 반동
         int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
@@ -204,7 +226,7 @@ public class PlayerMove : MonoBehaviour
     private void OffDamaged()
     {
         // 플레이어 이펙트
-        spriteRenderer.color = new Color(1, 1, 1, 1);   // 투명도 조절
+        //spriteRenderer.color = new Color(1, 1, 1, 1);   // 투명도 조절
         gameObject.layer = 8;   // 레이어 변경: Player 
     }
 
@@ -212,7 +234,7 @@ public class PlayerMove : MonoBehaviour
     {
         // 죽음 이펙트
         gameObject.layer = 9;   // PlayerDamaged 레이어
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        //spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         Invoke("Respawn", 2);   // 2초 후 리스폰
     }
@@ -220,11 +242,11 @@ public class PlayerMove : MonoBehaviour
     private void Respawn()
     {
         // 플레이어 원위치
-        spriteRenderer.flipX = false;
+        //spriteRenderer.flipX = false;
         gameObject.transform.position = new Vector3(-5, -3, -1);
         gameManager.playerHP = 4;
         gameObject.layer = 8;   // Player 레이어
-        spriteRenderer.color = new Color(1, 1, 1, 1);
+        //spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 
     private IEnumerator reduceDamagedBg()

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
@@ -54,7 +55,8 @@ public class EnemyMove : MonoBehaviour
         scan = gameObject.transform.Find("EnemyAI");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        //Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
+        
+        Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
         InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
         tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
         tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
@@ -150,12 +152,18 @@ public class EnemyMove : MonoBehaviour
         if (touchedSword && (canCounterattack == true || tunnel.Tun == true))
         {
             Debug.Log("반격 성공!");
+            player.GetComponent<Animator>().SetBool("isCounter", true); //플레이어 카운터 애니 재생
+            //false는 PlayerMove 컴포넌트의 endCounter()에서 실행
+            //player.GetComponent<Animator>().SetTrigger("isCounter");
             canCounterattack = false;
             preStimer = SwaitingTime / 2.0f;
             enemyHP = 0;
             OnDie();
         }
+
     }
+
+    
 
     public void OnDamaged()
     {
@@ -229,7 +237,6 @@ public class EnemyMove : MonoBehaviour
                     anim.SetBool("isAttacking", true);
                     attackReady = true;
                     Invoke("EnemyAttack", 0.2f);
-                    EnemyAttack();
                     AttackStack += 1;
                     Debug.Log("AttackStack: " + AttackStack);
                 }
@@ -257,7 +264,7 @@ public class EnemyMove : MonoBehaviour
         Debug.Log(rayHit.collider != null && rayHit.collider.tag == "Player");
         if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            player.OnDamaged(rigid.transform.position);
+            player.OnDamaged(rigid.transform.position); 
 
         }
         anim.SetBool("isStrongAttacking", false);
