@@ -41,6 +41,7 @@ public class EnemyMove : MonoBehaviour
     float SwaitingTime;
     bool isAttacking = false;
     bool attackReady = false;
+    Vector2 direction;
 
     RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
@@ -76,7 +77,7 @@ public class EnemyMove : MonoBehaviour
         canCounterattack = false; // 반격 가능 여부
         preStimer = SwaitingTime / 2.0f;    // 반격 가능해질때까지 기다리는 타이머
         isAttacking = false;
-}
+    }
 
     IEnumerator ChangeMovement()
     {
@@ -102,31 +103,24 @@ public class EnemyMove : MonoBehaviour
     {
         if (player.isInterrupting == true)
             OnInterrupt();
+        
         // 레이어 검사 때문에 Update에서 수행
-        if (gameObject.layer != 7)// 쇼크 상태가 아니거나 공격 준비상태가 아닐 때 움직여라
+        if (gameObject.layer != 7)  // 쇼크 상태가 아니면 움직여라
         {
-            if (attackReady == true)
-            {
-                rigid.velocity = new Vector2(0, rigid.velocity.y);
-            }
-            else
-            {
-                Move();
-            }
+            Move();
         }
-
-        else if (gameObject.layer == 7) // 쇼크 상태이이거나 공격 준비상태일 때 멈춰라
+        else if(gameObject.layer == 7)// 쇼크 상태이면 멈춰라
         {
             anim.SetBool("is_Walking", false);
             rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
-        
+            
         if (tunnel.Tun == false) // 적 AI OnOff
         {
             GameObject.Find("Enemy").transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
             AttackScan = true;
         }
-        else if(tunnel.Tun == true && tunnelL.states == false)
+        else if (tunnel.Tun == true && tunnelL.states == false)
         {
             scan.gameObject.SetActive(false);// 스캔 콜라이더 비활성화
             AttackScan = false;
@@ -138,7 +132,8 @@ public class EnemyMove : MonoBehaviour
                 canCounterattack = true;     // 반격 가능
                 preStimer = SwaitingTime / 2.0f;
                 Debug.Log("반격 해!!");
-            } else if (!canCounterattack)
+            }
+            else if (!canCounterattack)
             {
                 preStimer -= Time.deltaTime;  // 타이머 발동
             }
@@ -148,6 +143,7 @@ public class EnemyMove : MonoBehaviour
     public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
     {
         player.isInterrupting = false;
+        Debug.Log("Tag = " + rayHit.collider.tag);
         Debug.Log("OnInterrupt()" + (rayHit.collider != null && rayHit.collider.tag == "Player"));
         if (rayHit.collider != null && rayHit.collider.tag == "Player" && (canCounterattack == true || tunnel.Tun == true))
         {
@@ -204,7 +200,7 @@ public class EnemyMove : MonoBehaviour
     void FixedUpdate()
     {
         // 플레이어가 눈앞에 있는지 확인
-        rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
+        rayHit = Physics2D.Raycast(rigid.position, direction, 3, LayerMask.GetMask("Player"));
         // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
         timer += Time.deltaTime;
@@ -214,12 +210,11 @@ public class EnemyMove : MonoBehaviour
             {
                 Debug.Log(rayHit.collider.tag);
                 anim.SetBool("is_Attack", true);
-                
+
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
                     attackReady = true;
                     Debug.Log("강격 준비 시작!");
-                    //EnemyStrongAttack();
                     Invoke("EnemyStrongAttack", SwaitingTime);
                     isAttacking = true;
                 }
@@ -239,7 +234,6 @@ public class EnemyMove : MonoBehaviour
             timer = 0;
         }
     }
-
     public void EnemyAttack()
     {
         Debug.Log("Player Attack!!");
@@ -252,51 +246,57 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("강격 준비 끝!");
         isAttacking = false;
         canCounterattack = false;    // 반격 불가
-        if (rayHit.collider != null && rayHit.collider.tag == "Player")
+        if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            Debug.Log("강격");
             player.OnDamaged(rigid.transform.position);
         }
-        AttackStack = 0;
         attackReady = false;
+        AttackStack = 0;
     }
 
     void Move() // 적 이동
     {
-        
-        Vector3 moveVelocity = Vector3.zero;
-        ppos_x = this.gameObject.transform.position;
-        if (isTracing)
+        if (!attackReady)
         {
-            Vector3 playerPos = traceTarget.transform.position;
-            if (playerPos.x < transform.position.x)
+            Vector3 moveVelocity = Vector3.zero;
+            ppos_x = this.gameObject.transform.position;
+            if (isTracing)
             {
-                nextMove = -1;
-                spriteRenderer.flipX = nextMove == 1;
+                Vector3 playerPos = traceTarget.transform.position;
+                if (playerPos.x < transform.position.x)
+                {
+                    nextMove = -1;
+                    spriteRenderer.flipX = nextMove == 1;
+                }
+                else if (playerPos.x > transform.position.x)
+                {
+                    nextMove = 1;
+                    spriteRenderer.flipX = nextMove == 1;
+                }
+                rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
             }
-            else if (playerPos.x > transform.position.x)
+            else
             {
-                nextMove = 1;
-                spriteRenderer.flipX = nextMove == 1;
+                if (ppos_x.x > spos_x.x + 2)
+                {
+                    nextMove = -1;
+                    spriteRenderer.flipX = nextMove == 1;
+                }
+                else if (ppos_x.x < spos_x.x - 2)
+                {
+                    nextMove = 1;
+                    spriteRenderer.flipX = nextMove == 1;
+                }
+                rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
             }
-            rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
+            direction = new Vector2(nextMove, rigid.velocity.y);
         }
         else
         {
-            if (ppos_x.x > spos_x.x + 2)
-            {
-                nextMove = -1;
-                spriteRenderer.flipX = nextMove == 1;
-            }
-            else if (ppos_x.x < spos_x.x - 2)
-            {
-                nextMove = 1;
-                spriteRenderer.flipX = nextMove == 1;
-            }
-            rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
+            rigid.velocity = new Vector2(0, 0);
         }
     }
-   
+
 
     // 플레이어 탐지
     void OnTriggerEnter2D(Collider2D other)
