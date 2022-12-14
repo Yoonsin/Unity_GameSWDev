@@ -41,7 +41,7 @@ public class EnemyMove : MonoBehaviour
     float SwaitingTime;
     bool isAttacking = false;
     bool attackReady = false;
-    Vector2 direction;
+    public bool touchedSword = false;    // 플레이어의 검에 닿았는가
 
     RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
@@ -50,7 +50,7 @@ public class EnemyMove : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         enemyCollider = GetComponent<CapsuleCollider2D>();
         scanCollider = GetComponent<BoxCollider2D>();
-        scan = GameObject.Find("Enemy").transform.Find("EnemyAI");
+        scan = gameObject.transform.Find("EnemyAI");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
@@ -77,6 +77,8 @@ public class EnemyMove : MonoBehaviour
         canCounterattack = false; // 반격 가능 여부
         preStimer = SwaitingTime / 2.0f;    // 반격 가능해질때까지 기다리는 타이머
         isAttacking = false;
+        attackReady = false;
+        touchedSword = false;
     }
 
     IEnumerator ChangeMovement()
@@ -117,7 +119,7 @@ public class EnemyMove : MonoBehaviour
             
         if (tunnel.Tun == false) // 적 AI OnOff
         {
-            GameObject.Find("Enemy").transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
+            gameObject.transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
             AttackScan = true;
         }
         else if (tunnel.Tun == true && tunnelL.states == false)
@@ -143,9 +145,8 @@ public class EnemyMove : MonoBehaviour
     public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
     {
         player.isInterrupting = false;
-        Debug.Log("Tag = " + rayHit.collider.tag);
         Debug.Log("OnInterrupt()" + (rayHit.collider != null && rayHit.collider.tag == "Player"));
-        if (rayHit.collider != null && rayHit.collider.tag == "Player" && (canCounterattack == true || tunnel.Tun == true))
+        if (touchedSword && (canCounterattack == true || tunnel.Tun == true))
         {
             Debug.Log("반격 성공!");
             canCounterattack = false;
@@ -290,7 +291,6 @@ public class EnemyMove : MonoBehaviour
                 }
                 rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
             }
-            direction = new Vector2(nextMove, rigid.velocity.y);
         }
         else
         {

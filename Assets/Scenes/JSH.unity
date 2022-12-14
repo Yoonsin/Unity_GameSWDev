@@ -1883,7 +1883,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 774494278}
-  enemy: {fileID: 1782198820}
 --- !u!1 &1109899018
 GameObject:
   m_ObjectHideFlags: 0
@@ -2659,7 +2658,8 @@ MonoBehaviour:
   movePower: 1
   enemyHP: 5
   enemyAD: 1
-  preStrongAttack: 0
+  canCounterattack: 0
+  touchedSword: 0
 --- !u!95 &1782198822
 Animator:
   serializedVersion: 4
@@ -2920,7 +2920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 774494278}
-  enemy: {fileID: 1782198820}
+  enemy: {fileID: 0}
   playerHP: 4
   playerAttack: 4
   startUiObj: {fileID: 1260407625}
@@ -2937,7 +2937,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1999229170
 GameObject:
@@ -3182,7 +3182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7596707847050368800, guid: f9bfcedd68d1c6742838e3641b31903a, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7596707847050368800, guid: f9bfcedd68d1c6742838e3641b31903a, type: 3}
       propertyPath: m_LocalPosition.x
