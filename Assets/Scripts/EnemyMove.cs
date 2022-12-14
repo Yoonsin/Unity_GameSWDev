@@ -237,7 +237,11 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("강격 준비 끝!");
         isAttacking = false;
         canCounterattack = false;    // 반격 불가
-        player.OnDamaged(rigid.transform.position);
+        if (rayHit.collider != null && rayHit.collider.tag == "Player")
+        {
+            Debug.Log("강격");
+            player.OnDamaged(rigid.transform.position);
+        }
         AttackStack = 0;
     }
 
