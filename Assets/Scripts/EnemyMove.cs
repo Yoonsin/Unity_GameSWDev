@@ -243,7 +243,7 @@ public class EnemyMove : MonoBehaviour
             }
             else
             {
-                //Debug.Log("범위에 없음");
+                Debug.Log("범위에 없음");
             }
             timer = 0;
         }
