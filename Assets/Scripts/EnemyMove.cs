@@ -40,6 +40,7 @@ public class EnemyMove : MonoBehaviour
     float Stimer;       // 강격 딜레이
     float SwaitingTime;
     bool isAttacking = false;
+    bool attackReady = false;
 
     RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
@@ -102,13 +103,24 @@ public class EnemyMove : MonoBehaviour
         if (player.isInterrupting == true)
             OnInterrupt();
         // 레이어 검사 때문에 Update에서 수행
-        if (gameObject.layer != 7)  // 쇼크 상태가 아니면 움직여라
-            Move();
-        else // 쇼크 상태이면 멈춰라
+        if (gameObject.layer != 7)// 쇼크 상태가 아니거나 공격 준비상태가 아닐 때 움직여라
+        {
+            if (attackReady == true)
+            {
+                rigid.velocity = new Vector2(0, rigid.velocity.y);
+            }
+            else
+            {
+                Move();
+            }
+        }
+
+        else if (gameObject.layer == 7) // 쇼크 상태이이거나 공격 준비상태일 때 멈춰라
         {
             anim.SetBool("is_Walking", false);
             rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
+        
         if (tunnel.Tun == false) // 적 AI OnOff
         {
             GameObject.Find("Enemy").transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
@@ -205,6 +217,7 @@ public class EnemyMove : MonoBehaviour
                 
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
+                    attackReady = true;
                     Debug.Log("강격 준비 시작!");
                     //EnemyStrongAttack();
                     Invoke("EnemyStrongAttack", SwaitingTime);
@@ -212,6 +225,7 @@ public class EnemyMove : MonoBehaviour
                 }
                 else if (AttackStack == 0)
                 {
+                    attackReady = true;
                     EnemyAttack();
                     AttackStack += 1;
                     Debug.Log("AttackStack: " + AttackStack);
@@ -225,11 +239,12 @@ public class EnemyMove : MonoBehaviour
             timer = 0;
         }
     }
+
     public void EnemyAttack()
     {
         Debug.Log("Player Attack!!");
         player.OnDamaged(rigid.transform.position);
-
+        attackReady = false;
     }
     public void EnemyStrongAttack()
     {
@@ -243,10 +258,12 @@ public class EnemyMove : MonoBehaviour
             player.OnDamaged(rigid.transform.position);
         }
         AttackStack = 0;
+        attackReady = false;
     }
 
     void Move() // 적 이동
     {
+        
         Vector3 moveVelocity = Vector3.zero;
         ppos_x = this.gameObject.transform.position;
         if (isTracing)

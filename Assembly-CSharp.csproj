@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\CameraMove.cs" />
     <Compile Include="Assets\Scripts\TunnelControl.cs" />
     <Compile Include="Assets\Scripts\InteractiveObject.cs" />
+    <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
     <Compile Include="Assets\Scripts\PlayerAttack.cs" />
     <Compile Include="Assets\Simple 2D Platformer BE2\ReadMe\Scripts\ReadmeBE2.cs" />
     <Compile Include="Assets\Scripts\RepeatBG_Re.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Assets\CubeScript.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
-    <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Images\NewSurfaceShader.shader" />
