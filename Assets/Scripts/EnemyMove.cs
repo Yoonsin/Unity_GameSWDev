@@ -17,6 +17,7 @@ public class EnemyMove : MonoBehaviour
     Vector3 spos_x;
     Vector3 ppos_x;
     Vector3 movement;
+    Vector2 dection;
     Animator anim;
     SpriteRenderer spriteRenderer;
     bool isTracing = false;
@@ -53,7 +54,7 @@ public class EnemyMove : MonoBehaviour
         scan = gameObject.transform.Find("EnemyAI");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
+        //Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), GetComponentsInChildren<CapsuleCollider2D>()[0]);  // 부모자식 간의 충돌 무시
         InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
         tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
         tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
@@ -67,7 +68,7 @@ public class EnemyMove : MonoBehaviour
         nextMove = Random.Range(-1, 1);
         if (nextMove == 0)
             nextMove = 1;
-        anim.SetBool("is_Walking", true);
+        anim.SetBool("isWalking", true);
         spriteRenderer.flipX = nextMove == 1;
         timer = 0.0f;
         waitingTime = 0.5f;
@@ -93,7 +94,7 @@ public class EnemyMove : MonoBehaviour
         }
 
         if (movementFlag == 1 || movementFlag == -1)
-            anim.SetBool("is_Walking", true);
+            anim.SetBool("isWalking", true);
 
         yield return new WaitForSeconds(3f);
 
@@ -113,7 +114,7 @@ public class EnemyMove : MonoBehaviour
         }
         else if(gameObject.layer == 7)// 쇼크 상태이면 멈춰라
         {
-            anim.SetBool("is_Walking", false);
+            anim.SetBool("isWalking", false);
             rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
             
@@ -158,6 +159,7 @@ public class EnemyMove : MonoBehaviour
 
     public void OnDamaged()
     {
+        anim.SetBool("isDamaged", true);
         enemyHP--;
         gameManager.AttackCntDown();
         if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
@@ -172,11 +174,11 @@ public class EnemyMove : MonoBehaviour
             player.attackTimer = 2;
         }
         Debug.Log("player attacked " + gameManager.playerAttack);
-        rigid.AddForce(Vector2.up * 3, ForceMode2D.Impulse);
+        anim.SetBool("isDamaged", false);
         Debug.Log("Enemy HP: " + enemyHP);
         if (enemyHP < 1)
         {
-            rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+            anim.SetBool("isDamaged", true);
             Invoke("OnDie", 1.5f);
         }
     }
@@ -203,6 +205,8 @@ public class EnemyMove : MonoBehaviour
         // 플레이어가 눈앞에 있는지 확인
         if (!attackReady)
             rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
+        else
+            rayHit = Physics2D.Raycast(rigid.position, dection, 3, LayerMask.GetMask("Player"));
         // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
         timer += Time.deltaTime;
@@ -211,18 +215,20 @@ public class EnemyMove : MonoBehaviour
             if (rayHit.collider != null && rayHit.collider.tag == "Player")
             {
                 Debug.Log(rayHit.collider.tag);
-                anim.SetBool("is_Attack", true);
 
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
                     attackReady = true;
                     Debug.Log("강격 준비 시작!");
+                    anim.SetBool("isStrongAttacking", true);
                     Invoke("EnemyStrongAttack", SwaitingTime);
                     isAttacking = true;
                 }
                 else if (AttackStack == 0)
                 {
+                    anim.SetBool("isAttacking", true);
                     attackReady = true;
+                    Invoke("EnemyAttack", 0.2f);
                     EnemyAttack();
                     AttackStack += 1;
                     Debug.Log("AttackStack: " + AttackStack);
@@ -231,7 +237,6 @@ public class EnemyMove : MonoBehaviour
             else
             {
                 //Debug.Log("범위에 없음");
-                anim.SetBool("is_Attack", false);
             }
             timer = 0;
         }
@@ -240,6 +245,7 @@ public class EnemyMove : MonoBehaviour
     {
         Debug.Log("Player Attack!!");
         player.OnDamaged(rigid.transform.position);
+        anim.SetBool("isAttacking", false);
         attackReady = false;
     }
     public void EnemyStrongAttack()
@@ -248,10 +254,13 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("강격 준비 끝!");
         isAttacking = false;
         canCounterattack = false;    // 반격 불가
+        Debug.Log(rayHit.collider != null && rayHit.collider.tag == "Player");
         if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
             player.OnDamaged(rigid.transform.position);
+
         }
+        anim.SetBool("isStrongAttacking", false);
         attackReady = false;
         AttackStack = 0;
     }
@@ -291,6 +300,7 @@ public class EnemyMove : MonoBehaviour
                 }
                 rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
             }
+            dection = rigid.velocity;
         }
         else
         {
@@ -315,7 +325,7 @@ public class EnemyMove : MonoBehaviour
         {
             isTracing = true;
             isAttack = true;
-            anim.SetBool("is_Walking", true);
+            anim.SetBool("isWalking", true);
         }
     }
 
