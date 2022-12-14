@@ -115,9 +115,7 @@ public class PlayerMove : MonoBehaviour
         // 반격
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("Z Pressed");
             isInterrupting = true;
-            //Debug.Log("반격 시도");
             anim.SetTrigger("Attack");
         }
 

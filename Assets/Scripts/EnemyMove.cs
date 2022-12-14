@@ -30,7 +30,8 @@ public class EnemyMove : MonoBehaviour
     int movementFlag = 0;
     int AttackStack; // 강격
     [SerializeField]
-    bool preStrongAttack = false; // 강공 준비 시간
+    bool canCounterattack = false; // 반격 가능 여부
+    float preStimer;    // 강공 준비 시간 중 반격 가능해질 때까지 기다리기
     bool AttackScan = false;
 
     float timer;        // 딜레이
@@ -38,6 +39,7 @@ public class EnemyMove : MonoBehaviour
 
     float Stimer;       // 강격 딜레이
     float SwaitingTime;
+    bool isAttacking = false;
 
     RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
@@ -70,7 +72,9 @@ public class EnemyMove : MonoBehaviour
         AttackStack = 0;
         Stimer = 0.0f;
         SwaitingTime = 3.0f;    // 원래 0.8f
-        preStrongAttack = false; // 강공 준비 시간
+        canCounterattack = false; // 반격 가능 여부
+        preStimer = SwaitingTime / 2.0f;    // 반격 가능해질때까지 기다리는 타이머
+        isAttacking = false;
 }
 
     IEnumerator ChangeMovement()
@@ -115,15 +119,29 @@ public class EnemyMove : MonoBehaviour
             scan.gameObject.SetActive(false);// 스캔 콜라이더 비활성화
             AttackScan = false;
         }
+        if (isAttacking)
+        {
+            if (preStimer < 0)
+            {
+                canCounterattack = true;     // 반격 가능
+                preStimer = SwaitingTime / 2.0f;
+                Debug.Log("반격 해!!");
+            } else if (!canCounterattack)
+            {
+                preStimer -= Time.deltaTime;  // 타이머 발동
+            }
+        }
     }
 
     public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
     {
         player.isInterrupting = false;
-        Debug.Log("OnInterrupt()");
-        if (rayHit.collider != null && rayHit.collider.tag == "Player" && (preStrongAttack == true || tunnel.Tun == true))
+        Debug.Log("OnInterrupt()" + (rayHit.collider != null && rayHit.collider.tag == "Player"));
+        if (rayHit.collider != null && rayHit.collider.tag == "Player" && (canCounterattack == true || tunnel.Tun == true))
         {
             Debug.Log("반격 성공!");
+            canCounterattack = false;
+            preStimer = SwaitingTime / 2.0f;
             enemyHP = 0;
             OnDie();
         }
@@ -136,7 +154,7 @@ public class EnemyMove : MonoBehaviour
         if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
         {
             enemyHP -= 1;   // 강공 추가 데미지
-            if (!preStrongAttack)
+            if (!canCounterattack)
                 OnShocked();
             player.attackTimer = 3;
         }
@@ -185,12 +203,12 @@ public class EnemyMove : MonoBehaviour
                 Debug.Log(rayHit.collider.tag);
                 anim.SetBool("is_Attack", true);
                 
-                if (AttackStack == 1) // 강격
+                if (AttackStack == 1 && isAttacking == false) // 강격
                 {
                     Debug.Log("강격 준비 시작!");
-                    preStrongAttack = true;     // 강공 준비 시작
                     //EnemyStrongAttack();
                     Invoke("EnemyStrongAttack", SwaitingTime);
+                    isAttacking = true;
                 }
                 else if (AttackStack == 0)
                 {
@@ -217,11 +235,10 @@ public class EnemyMove : MonoBehaviour
     {
 
         Debug.Log("강격 준비 끝!");
-        preStrongAttack = false;    // 강공 준비 종료
-        Debug.Log("Player StrongAttack!!");
+        isAttacking = false;
+        canCounterattack = false;    // 반격 불가
         player.OnDamaged(rigid.transform.position);
         AttackStack = 0;
-
     }
 
     void Move() // 적 이동
