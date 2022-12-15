@@ -55,7 +55,10 @@ public class EnemyMove : MonoBehaviour
         scan = gameObject.transform.Find("EnemyAI");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        player = GameObject.Find("Player").GetComponent<PlayerMove>();
+
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
         InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
         tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
@@ -144,13 +147,17 @@ public class EnemyMove : MonoBehaviour
             }
         }
 
-        if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword)
+        if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
         {
+            if (tunnel.Tun == true && !tunnelL.states)
+                Debug.Log("터널 암살!");
             Debug.Log("반격 중 적 강공");
             OnShocked();
         }
-        else if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword)
+        else if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
         {
+            if (tunnel.Tun == true && !tunnelL.states)
+                Debug.Log("터널 암살!");
             Debug.Log("반격 성공!");
             //false는 PlayerMove 컴포넌트의 endCounter()에서 실행
             //player.GetComponent<Animator>().SetTrigger("isCounter");
@@ -219,6 +226,7 @@ public class EnemyMove : MonoBehaviour
 
     private void OnDie()
     {
+        gameManager.currentStageEnemy--;
         Debug.Log("Enemy Dead!");
         Destroy(gameObject);
     }

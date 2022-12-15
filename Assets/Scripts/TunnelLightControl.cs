@@ -26,19 +26,19 @@ public class TunnelLightControl : MonoBehaviour
         {
             lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
             states = false;
-            Debug.Log("조명 off");
+            //Debug.Log("조명 off");
         }
         else if (tunnel.Tun == true && InterOb.trigger == false)
         {
             GameObject.Find("Light_Parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
             states = true;
-            Debug.Log("조명 on");
+            //Debug.Log("조명 on");
         }
         else if (tunnel.Tun == false && states == true)
         {
             lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
             states = false;
-            Debug.Log("조명 off");
+            //Debug.Log("조명 off");
         }
     }
 }

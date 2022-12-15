@@ -6,10 +6,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public PlayerMove player;
-    public EnemyMove enemy;
-
-    //private bool isRunning = true;
-    //public bool gameOver = false;
 
     public int playerHP = 4;
     public int playerAttack = 4;
@@ -17,12 +13,24 @@ public class GameManager : MonoBehaviour
     public GameObject startUiObj;
     private Image startUi;
 
+    public float[] wallX = new float[4] { -45.0f, -1.0f, 50.5f, 115.0f };// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
+    public int[] enemyNum = new int[3] { 2, 2, 2 };  // 스테이지별 몬스터 수
+    public int currentStageEnemy = 0;   // 현재 남은 적 수
+    public int currentStage = 0;        // 현재 스테이지
+    public bool isOpened = false;       // 스테이지의 문이 열렸는가?
 
     private void Awake()
     {
         startUi = startUiObj.GetComponent<Image>(); //ui 이미지 받아오기
+    }
+
+    private void Start()
+    {
         startUi.color = new Color(0, 0, 0, startUiAlpha);
-        Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤 
+        Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤
+        currentStage = 1;
+        currentStageEnemy = enemyNum[currentStage - 1];
+        isOpened = false;
     }
 
     public void startButtonDown()

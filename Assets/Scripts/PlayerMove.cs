@@ -179,6 +179,16 @@ public class PlayerMove : MonoBehaviour
                     anim.SetBool("isJumping", false);
             }
         }
+
+        // 열린 문 닫기
+        if (rigid.position.x >= gameManager.wallX[gameManager.currentStage] + 2.0f && gameManager.isOpened)
+        {
+            Debug.Log("문 닫는다.");
+            GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
+            gameManager.isOpened = false;
+            gameManager.currentStage++;
+            gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -223,7 +233,7 @@ public class PlayerMove : MonoBehaviour
 
         // 반동
         int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dirc, 1) * 5, ForceMode2D.Impulse);
+        rigid.AddForce(new Vector2(dirc, 0) * 5, ForceMode2D.Impulse);
 
         Invoke("OffDamaged", 0.5f);    // OffDamaged() 호출 시간 지연. 무적 해제. 수정 필요.
     }
