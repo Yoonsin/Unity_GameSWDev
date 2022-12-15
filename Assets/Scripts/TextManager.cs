@@ -18,14 +18,14 @@ public class TextManager : MonoBehaviour
 
     TextData textdata;
     string[] textSplit;
-    int textCnt = 0;
+    int textCnt = 16; //0~15 : 1단계
     bool textFlag = true; //창 활성화 여부
     bool textAniFlag = false; //텍스트 애니 활성화 여부
     string writerText;
 
 
     int questCnt = 0; //퀘스트 id
-    int oldQuestCnt = 0; //퀘스트 
+    int oldQuestCnt = 1; //퀘스트 
     int id = 10; //호랑이 id
     int length = 0; //호랑이 대사 길이
 
@@ -35,6 +35,7 @@ public class TextManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         textdata = TextData.GetComponent<TextData>();
         length = textdata.getLength(id);
         //Time.timeScale = 0;
@@ -84,12 +85,14 @@ public class TextManager : MonoBehaviour
 
             if (questCnt == 0) //처음 튜토리얼 할 때만 배경 검정색
                 bgImg.color = new Color(0, 0, 0, 1);
+            else
+                bgImg.color = new Color(0, 0, 0, 0);
             
             portraitImg.sprite = textdata.getPortrait(id, int.Parse((textSplit[1].Split('$'))[0]));
             portraitImg.color = new Color(1, 1, 1, 1); //표정 이미지 갱신
             StartCoroutine(NormalText(textSplit[0])); //텍스트 애니 재생 + 대사 갱신
             textfield.SetActive(textFlag); //텍스트 창 활성화
-
+           //Debug.Log(textCnt);
             textCnt++; //다음 대사로 옮기기 
         }
     }
