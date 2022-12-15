@@ -39,15 +39,16 @@ public class GameManager : MonoBehaviour
          color.a = 0f;
          startUi.color = color;*/
 
-        Time.timeScale = 1; //버튼 누르면 시간 활성화
+        //Time.timeScale = 1; //버튼 누르면 시간 활성화
         startUiObj.SetActive(false); //스타트 ui 전부 비활성화 시키기
+        TextManager.onTM = true; //텍스트 매니저 스타트
 
     }
 
     // 플레이어 체력 관리
     public void HealthDown()
     {
-        playerHP --;
+        playerHP--;
 
         if (playerHP < 1)
         {
