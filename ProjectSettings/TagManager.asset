@@ -9,6 +9,7 @@ TagManager:
   - Weapon
   - Enemy_Attack
   - Switch
+  - Stage
   layers:
   - Default
   - TransparentFX

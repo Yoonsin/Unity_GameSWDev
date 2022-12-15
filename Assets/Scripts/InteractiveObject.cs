@@ -7,13 +7,13 @@ public class InteractiveObject : MonoBehaviour
     public GameManager gameManager;
     public PlayerMove player;
     public TunnelControl tunnel;
-    
+
     public bool trigger = false;
     public bool Btrigger = false;
 
     void Start()
     {
-        
+
     }
 
     // 상호작용 시 수행
@@ -58,7 +58,8 @@ public class InteractiveObject : MonoBehaviour
                 }
             }
             Btrigger = false;
-        } else if (this.name == "BombUnit")
+        }
+        else if (this.name == "BombUnit")
         {
             Btrigger = false;
         }

@@ -7,6 +7,7 @@ using static UnityEditor.VersionControl.Asset;
 public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
+    public TextManager textManager;
     public TunnelControl tunnel;
     public InteractiveObject InterOb;
     public TunnelLightControl tunnelL;
@@ -209,7 +210,22 @@ public class PlayerMove : MonoBehaviour
             isDamaged = true;
             OnDamaged(collision.transform.position);
         }
-        
+
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("collision: " + collision.gameObject.tag);
+        if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
+        {
+            collision.gameObject.SetActive(false);
+            textManager.setFlag(true); //대화창 활성화;
+            textManager.showText(); //되자마자 대화창 다시 띄우기
+            Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
+            
+
+        }
     }
 
     public void OnDamaged(Vector2 targetPos)

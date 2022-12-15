@@ -18,14 +18,14 @@ public class TextManager : MonoBehaviour
 
     TextData textdata;
     string[] textSplit;
-    int textCnt = 16; //0~15 : 1단계
+    int textCnt = 0; //0~15 : 1단계
     bool textFlag = true; //창 활성화 여부
     bool textAniFlag = false; //텍스트 애니 활성화 여부
     string writerText;
 
 
     int questCnt = 0; //퀘스트 id
-    int oldQuestCnt = 1; //퀘스트 
+    int oldQuestCnt = 0; //퀘스트 
     int id = 10; //호랑이 id
     int length = 0; //호랑이 대사 길이
 
