@@ -35,6 +35,7 @@ public class PlayerAttack : MonoBehaviour
                 Debug.Log("Enemy Attacked");
                 player.isAttacking = false;
                 Enemy.OnDamaged();
+
             }
 
             Enemy = null;

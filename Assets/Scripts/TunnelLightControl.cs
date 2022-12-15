@@ -14,24 +14,31 @@ public class TunnelLightControl : MonoBehaviour
 
     void Start()
     {
-        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
         lighting = GameObject.Find("Light_Parent").transform.Find("Light");
+        lighting.gameObject.SetActive(false);
     }
 
 
     void Update()
     {
-        if (tunnel.Tun == true && states == true && InterOb.trigger == true)
+        if (tunnel.Tun == false && InterOb.trigger == true)
         {
             lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
             states = false;
             Debug.Log("조명 off");
         }
-        else if (tunnel.Tun == false && states == false)
+        else if (tunnel.Tun == true && InterOb.trigger == false)
         {
             GameObject.Find("Light_Parent").transform.Find("Light").gameObject.SetActive(true);// 조명 오브젝트 활성화
             states = true;
             Debug.Log("조명 on");
+        }
+        else if (tunnel.Tun == false && states == true)
+        {
+            lighting.gameObject.SetActive(false);// 조명 오브젝트 비활성화
+            states = false;
+            Debug.Log("조명 off");
         }
     }
 }

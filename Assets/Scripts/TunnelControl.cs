@@ -13,9 +13,9 @@ public class TunnelControl : MonoBehaviour
 
     void Start()
     {
-        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
         light = GetComponentInChildren<Light2D>();
-        Invoke("TurnOn", 1000);
+        Invoke("TurnOn", 5);
     }
 
     

@@ -57,7 +57,7 @@ public class EnemyMove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
-        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
         tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
         tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
     }
@@ -191,13 +191,18 @@ public class EnemyMove : MonoBehaviour
             player.attackTimer = 2;
         }
         Debug.Log("player attacked " + gameManager.playerAttack);
-        anim.SetBool("isDamaged", false);
+        Invoke("Sterne", 0.5f);
         Debug.Log("Enemy HP: " + enemyHP);
         if (enemyHP < 1)
         {
             anim.SetBool("isDamaged", true);
             Invoke("OnDie", 1.5f);
         }
+    }
+
+    private void Sterne()
+    {
+        anim.SetBool("isDamaged", false);
     }
     private void OnShocked()
     {
@@ -222,9 +227,9 @@ public class EnemyMove : MonoBehaviour
     {
         // 플레이어가 눈앞에 있는지 확인
         if (!attackReady)
-            rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 3, LayerMask.GetMask("Player"));
+            rayHit = Physics2D.Raycast(rigid.position, rigid.velocity, 1, LayerMask.GetMask("Player"));
         else
-            rayHit = Physics2D.Raycast(rigid.position, dection, 3, LayerMask.GetMask("Player"));
+            rayHit = Physics2D.Raycast(rigid.position, dection, 1, LayerMask.GetMask("Player"));
         // 레이캐스트 그리기
         Debug.DrawRay(rigid.position, rigid.velocity, new Color(0, 2, 0));
         timer += Time.deltaTime;
@@ -246,7 +251,7 @@ public class EnemyMove : MonoBehaviour
                 {
                     anim.SetBool("isAttacking", true);
                     attackReady = true;
-                    Invoke("EnemyAttack", 0.2f);
+                    Invoke("EnemyAttack", 0.5f);
                     AttackStack += 1;
                     Debug.Log("AttackStack: " + AttackStack);
                 }

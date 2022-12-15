@@ -46,7 +46,7 @@ public class PlayerMove : MonoBehaviour
         anim = GetComponent<Animator>();
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
         playerLight = GameObject.Find("Player").transform.Find("Player_light");
-        InterOb = GameObject.Find("Spike").GetComponent<InteractiveObject>();
+        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
         tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
         tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
     }
