@@ -184,7 +184,7 @@ public class PlayerMove : MonoBehaviour
         // ¿­¸° ¹® ´Ý±â
         if (rigid.position.x >= gameManager.wallX[gameManager.currentStage] + 2.0f && gameManager.isOpened)
         {
-            Debug.Log("¹® ´Ý´Â´Ù.");
+            Debug.Log("Player X: " + rigid.position.x);
             GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
             gameManager.isOpened = false;
             gameManager.currentStage++;

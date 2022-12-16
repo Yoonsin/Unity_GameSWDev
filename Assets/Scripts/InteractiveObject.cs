@@ -44,18 +44,17 @@ public class InteractiveObject : MonoBehaviour
             // 폭탄 해체하고 문 열고 문 넘어가기. 문 닫는 건 플레이어의 Update에서 함.
             if (Btrigger == true)
             {
-                // 폭탄 해체
-                this.gameObject.SetActive(false);
                 Btrigger = false;
                 player.interactiveObject = null;
-
                 // 문 열기
-                //Debug.Log("삭제할 벽: " + GameObject.Find("Wall").transform.GetChild(gamemanager.currentStage).name);
+                Debug.Log("삭제할 벽: " + GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).name);
                 if (GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).name != "FinalWall")   // 마지막 벽은 부수면 안 됨
                 {
                     GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(false);
                     gameManager.isOpened = true;
                 }
+                // 폭탄 해체
+                this.transform.GetChild(gameManager.currentStage - 1).gameObject.SetActive(false);
             }
             Btrigger = false;
         }
