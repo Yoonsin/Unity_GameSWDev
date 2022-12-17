@@ -233,7 +233,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.5}
@@ -878,6 +878,7 @@ GameObject:
   - component: {fileID: 358070872}
   - component: {fileID: 358070874}
   - component: {fileID: 358070873}
+  - component: {fileID: 358070875}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Enemy
@@ -1010,6 +1011,27 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.2}
   m_Size: {x: 0.5, y: 1.5}
   m_Direction: 0
+--- !u!114 &358070875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358070869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18eafccd013da94bb256420917ddfcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 1967092493}
+  player: {fileID: 223600674}
+  tunnel: {fileID: 1131777101}
+  InterOb: {fileID: 1591537460}
+  tunnelL: {fileID: 766453434}
+  movePower: 1
+  canCounterattack: 0
+  touchedSword: 0
+  Boss: 1
 --- !u!1 &397006299
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,6 +2883,7 @@ MonoBehaviour:
   movePower: 1
   canCounterattack: 0
   touchedSword: 0
+  Boss: 0
 --- !u!95 &1782198822
 Animator:
   serializedVersion: 4
