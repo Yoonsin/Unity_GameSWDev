@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemyMove : MonoBehaviour
 {
@@ -110,9 +111,14 @@ public class EnemyMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.isInterrupting == true)
+        if (player.isInterrupting == true) //플레이어가 반격 키를 눌렀을 때
         {
-            OnInterrupt();
+            if (OnInterrupt()) //반격 가능하면
+            {
+                player.anim.SetTrigger("onCounter"); //플레이어 카운터 애니 재생
+
+            }
+
         }
         
         // 레이어 검사 때문에 Update에서 수행
@@ -151,7 +157,7 @@ public class EnemyMove : MonoBehaviour
         }
         if (player.anim)
         {
-            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword && (canCounterattack || (tunnel.Tun && !tunnelL.states)))
+            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && OnInterrupt())
             {
                 isCounted = true;
                 if (tunnel.Tun == true && !tunnelL.states)
@@ -173,13 +179,14 @@ public class EnemyMove : MonoBehaviour
         }
     }
 
-    public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
+    public bool OnInterrupt()   //플레이어의 반격 가능 여부 반환
     {
         //Debug.Log("OnInterrupt() " + canCounterattack);
         if (touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
-        {
-            player.anim.SetTrigger("onCounter"); //플레이어 카운터 애니 재생
-        }
+            return true;
+        else 
+            return false;
+
     }
 
     
@@ -293,7 +300,11 @@ public class EnemyMove : MonoBehaviour
         canCounterattack = false;    // 반격 불가
         if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            player.OnDamaged(rigid.transform.position); 
+            if (!player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter")) //반격 못했을 때만
+            {
+                player.OnDamaged(rigid.transform.position); //플레이어 데미지 받음.
+            }
+            
 
         }
         anim.SetBool("isStrongAttacking", false);

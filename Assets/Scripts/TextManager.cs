@@ -30,7 +30,10 @@ public class TextManager : MonoBehaviour
     int length = 0; //호랑이 대사 길이
 
 
-
+    private void Awake()
+    {
+        
+    }
 
     // Start is called before the first frame update
     void Start()

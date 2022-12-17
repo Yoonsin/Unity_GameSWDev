@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     public GameObject startUiObj;
     private Image startUi;
 
-    public float[] wallX = new float[4];// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
+    public float[] wallX = new float[5];// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
+    public float[] childX = new float[4]; //스테이지별 아이의 X좌표 
     public int[] enemyNum = new int[3] { 2, 2, 2 };  // 스테이지별 몬스터 수
     public int currentStageEnemy = 0;   // 현재 남은 적 수
     public int currentStage = 0;        // 현재 스테이지
@@ -35,7 +36,7 @@ public class GameManager : MonoBehaviour
         currentStageEnemy = enemyNum[currentStage - 1];
         isOpened = false;
         // 벽 좌표 초기화
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             wallX[i] = GameObject.Find("Wall").transform.GetChild(i).position.x;
             Debug.Log("wall " + wallX[i]);
@@ -59,8 +60,9 @@ public class GameManager : MonoBehaviour
     {
         playerHP--;
 
-        if (playerHP < 1)
+        if (playerHP == 0) //0일 때 딱 한번만 죽게함( HP < 0 하면 안의 코드가 여러번 재생됨) 
         {
+            Debug.Log(playerHP);
             player.OnDie();     // 플레이어 죽음 이펙트
 
             // 결과 UI

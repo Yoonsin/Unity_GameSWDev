@@ -8,12 +8,13 @@ public class InteractiveObject : MonoBehaviour
     public PlayerMove player;
     public TunnelControl tunnel;
 
+    public float[] bombX = new float[4]; //BombUnit의 X 좌표 (스테이지 넘어갈 때마다 위치 옮겨줄 예정)
     public bool trigger = false;
     public bool Btrigger = false;
 
     void Start()
-    {
-
+    { 
+        //bombX = { 12.1 , 70.6, };
     }
 
     // 상호작용 시 수행
@@ -54,7 +55,8 @@ public class InteractiveObject : MonoBehaviour
                     gameManager.isOpened = true;
                 }
                 // 폭탄 해체
-                this.transform.GetChild(gameManager.currentStage - 1).gameObject.SetActive(false);
+                this.transform.position = new Vector3(bombX[gameManager.currentStage], this.transform.position.y, this.transform.position.z);
+                //this.transform.GetChild(gameManager.currentStage - 1).gameObject.SetActive(false);
             }
             Btrigger = false;
         }

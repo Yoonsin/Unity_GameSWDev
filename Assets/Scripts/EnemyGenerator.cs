@@ -28,7 +28,7 @@ public class EnemyGenerator : MonoBehaviour
     // Àû ½ºÆù
     void enemySpawn()
     {
-        for (int stage = 0; stage < 2; stage++)
+        for (int stage = 0; stage < 3; stage++)
         {
             for (int spawned = 0; spawned < gameManager.enemyNum[stage]; spawned++)
             {

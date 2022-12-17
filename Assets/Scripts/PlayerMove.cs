@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using static UnityEditor.VersionControl.Asset;
+using System;
+using System.Threading;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -11,6 +14,7 @@ public class PlayerMove : MonoBehaviour
     public TunnelControl tunnel;
     public InteractiveObject InterOb;
     public TunnelLightControl tunnelL;
+    public GameObject child;
 
     Rigidbody2D rigid;
     //CapsuleCollider2D capsuleCollider;
@@ -36,6 +40,7 @@ public class PlayerMove : MonoBehaviour
     public float attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
     public bool isAttacking = false;
     public bool isInterrupting = false; // 반격을 시도했는지 확인
+    public int childCnt = 0; //아이 위치 옮겨준 횟수
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
 
@@ -51,6 +56,7 @@ public class PlayerMove : MonoBehaviour
 
     void Start()
     {
+        
         gameObject.layer = 8;   // 플레이어의 레이어를 Player로 함
         damagedBgAlpha = 0;
         damagedBg.color = new Color(1, 1, 1, 0);
@@ -66,7 +72,10 @@ public class PlayerMove : MonoBehaviour
         isAttacking = false;
         isInterrupting = false; // 반격을 시도했는지 확인
         interactiveObject = null;
+    
+        childCnt = 0;  //아이 위치 옮겨준 횟수
     }
+
 
     // 매 프레임 호출. 주로 단발적 이벤트.
     private void Update()
@@ -116,7 +125,7 @@ public class PlayerMove : MonoBehaviour
         {
             transform.localScale = new Vector3(-3, 3, 3);   // Left flip
         }
-
+        
         // 걷기 애니메이션
         if (rigid.velocity.normalized.x == 0)
             anim.SetBool("isWalking", false);
@@ -137,6 +146,10 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z) && anim.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             isInterrupting = true;
+        }
+        if (Input.GetKeyUp(KeyCode.Z))
+        {
+            isInterrupting = false;
         }
 
         // 상호작용
@@ -199,7 +212,10 @@ public class PlayerMove : MonoBehaviour
             GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
             gameManager.isOpened = false;
             gameManager.currentStage++;
-            gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
+
+            if (gameManager.currentStage != 4) //마지막 스테이지는 보스 스테이지 이므로 제외 (if문 안써주면 배열 인덱스 오류남)
+                gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
+
         }
     }
 
@@ -216,22 +232,26 @@ public class PlayerMove : MonoBehaviour
         */
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) //다음 스테이지로 넘어감
     {
         //Debug.Log("collision: " + collision.gameObject.tag);
         if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
         {
-            collision.gameObject.SetActive(false);
+            collision.gameObject.SetActive(false); //부딫힌 물체는 비활성화 
+            child.transform.position = new Vector3(gameManager.childX[childCnt], child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
+            childCnt++;
             textManager.setFlag(true); //대화창 활성화;
             textManager.showText(); //되자마자 대화창 다시 띄우기
             Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
-            
+
+           
 
         }
     }
 
     public void OnDamaged(Vector2 targetPos)
     {
+     
         // 체력 감소
         gameManager.HealthDown();
         if (gameManager.playerHP < 1)
@@ -275,14 +295,9 @@ public class PlayerMove : MonoBehaviour
     
     private void Respawn()
     {
-        // 밑에 다 지우고 씬 리로드 시키기
-
-        // 플레이어 원위치
-        //spriteRenderer.flipX = false;
-        gameObject.transform.position = new Vector3(-5, -3, -1);
-        gameManager.playerHP = 4;
-        gameObject.layer = 8;   // Player 레이어
-        //spriteRenderer.color = new Color(1, 1, 1, 1);
+        //씬 리로드
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
     }
 
     private IEnumerator reduceDamagedBg()
@@ -302,7 +317,7 @@ public class PlayerMove : MonoBehaviour
         while (timer <= duration)
         {
             isShaked = true; //true면 cameraMove 에서 카메라가 플레이어 따라가는 코드 중지시키기. (cameraMove의 카메라 위치 변경 코드가 여기 코드를 덮고있어서 흔들림이 적용안돼기 때문)
-            Camera.transform.localPosition = (Vector3)Random.insideUnitCircle * amount + cameraOriginPos;
+            Camera.transform.localPosition = (Vector3)UnityEngine.Random.insideUnitCircle * amount + cameraOriginPos;
 
             timer += Time.deltaTime;
             yield return null;
