@@ -193,9 +193,9 @@ public class EnemyMove : MonoBehaviour
                 OnShocked();
             player.attackTimer = 3;
         }
-        else                                // 일반 공격 시 3초동안 공격 없으면 공격 횟수 초기화
+        else                                // 일반 공격 시 2초동안 공격 없으면 공격 횟수 초기화
         {
-            player.attackTimer = 3;
+            player.attackTimer = 2;
         }
         Debug.Log("player attacked " + gameManager.playerAttack);
         Invoke("Sterne", 0.5f);
