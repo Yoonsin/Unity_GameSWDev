@@ -35,7 +35,10 @@ public class PlayerAttack : MonoBehaviour
             {
                 //Debug.Log("playerAttack_TrrigerEnter: Enemy Attacked");
                 player.isAttacking = false;
-                Enemy.OnDamaged();
+                if (Enemy.Boss == false)
+                    Enemy.OnDamaged();
+                else
+                    Enemy.BossOnDamaged();
             }
 
             //Enemy = null;

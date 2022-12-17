@@ -28,7 +28,8 @@ public class EnemyMove : MonoBehaviour
     private Transform scan;
 
     int nextMove;
-    int enemyHP = 5;
+    int enemyHP;
+    int bossHP;
     int movementFlag = 0;
     int AttackStack; // 강격
     [SerializeField]
@@ -42,8 +43,10 @@ public class EnemyMove : MonoBehaviour
 
     float SwaitingTime;
     bool isAttacking = false;
-    bool attackReady = false;
+    bool attackReady = false; // 플레이어 정지 변수
     public bool touchedSword = false;    // 플레이어의 검에 닿았는가
+
+    public bool Boss; // 현재 오브젝트가 보스인가
 
     RaycastHit2D rayHit;    // 플레이어가 적 시야 내에 있는지 확인하는 레이캐스트
 
@@ -85,6 +88,7 @@ public class EnemyMove : MonoBehaviour
         touchedSword = false;
         isTracing = false;
         enemyHP = 5;
+        bossHP = enemyHP * 2;
         movementFlag = 0;
         traceTarget = null;
     }
@@ -157,24 +161,27 @@ public class EnemyMove : MonoBehaviour
         }
         if (player.anim)
         {
-            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && OnInterrupt())
+            if (!Boss)
             {
-                isCounted = true;
-                if (tunnel.Tun == true && !tunnelL.states)
-                    Debug.Log("터널 암살!");
-                Debug.Log("반격 중 적 강공");
-                OnShocked();
-            }
-            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword && (isCounted || (tunnel.Tun && !tunnelL.states)))
-            {
-                isCounted = false;
-                if (tunnel.Tun == true && !tunnelL.states)
-                    Debug.Log("터널 암살!");
-                Debug.Log("반격 성공!");
-                canCounterattack = false;
-                preStimer = SwaitingTime / 2.0f;
-                enemyHP = 0;
-                OnDie();
+                if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && OnInterrupt())
+                {
+                    isCounted = true;
+                    if (tunnel.Tun == true && !tunnelL.states)
+                        Debug.Log("터널 암살!");
+                    Debug.Log("반격 중 적 강공");
+                    OnShocked();
+                }
+                if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword && (isCounted || (tunnel.Tun && !tunnelL.states)))
+                {
+                    isCounted = false;
+                    if (tunnel.Tun == true && !tunnelL.states)
+                        Debug.Log("터널 암살!");
+                    Debug.Log("반격 성공!");
+                    canCounterattack = false;
+                    preStimer = SwaitingTime / 2.0f;
+                    enemyHP = 0;
+                    OnDie();
+                }
             }
         }
     }
@@ -193,8 +200,9 @@ public class EnemyMove : MonoBehaviour
 
     public void OnDamaged()
     {
+        attackReady = true;
         anim.SetBool("isDamaged", true);
-        enemyHP--;
+        --enemyHP;
         Debug.Log("enemy_OnDamaged: " + enemyHP);
         gameManager.AttackCntDown();
 
@@ -213,7 +221,36 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("EnemyMove_OnDamaged player attacked " + gameManager.playerAttack);
         Invoke("Sterne", 0.5f);
         Debug.Log("Enemy HP: " + enemyHP);
-        if (enemyHP < 1)
+        if (enemyHP < 1) 
+        {
+            anim.SetBool("isDamaged", true);
+            Invoke("OnDie", 1.5f);
+        }
+    }
+    public void BossOnDamaged()
+    {
+        attackReady = true;
+        anim.SetBool("isDamaged", true);
+        --bossHP;
+        Debug.Log("enemy_OnDamaged: " + bossHP);
+        gameManager.AttackCntDown();
+
+        if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
+        {
+            Debug.Log("강공!");
+            bossHP -= 1;   // 강공 추가 데미지
+            if (!canCounterattack)
+                OnShocked();
+            player.attackTimer = 3;
+        }
+        else                                // 일반 공격 시 3초동안 공격 없으면 공격 횟수 초기화
+        {
+            player.attackTimer = 3;
+        }
+        Debug.Log("EnemyMove_OnDamaged player attacked " + gameManager.playerAttack);
+        Invoke("Sterne", 0.5f);
+        Debug.Log("Enemy HP: " + bossHP);
+        if (bossHP < 1)
         {
             anim.SetBool("isDamaged", true);
             Invoke("OnDie", 1.5f);
@@ -223,10 +260,14 @@ public class EnemyMove : MonoBehaviour
     private void Sterne()
     {
         anim.SetBool("isDamaged", false);
+        attackReady = false;
     }
     private void OnShocked()
     {
-        Debug.Log("적: 으악!");
+        if (!Boss)
+            Debug.Log("적: 으악!");
+        else
+            Debug.Log("보스: 으악!");
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);    // 적 투명도 조절
         gameObject.layer = 7;                  // 레이어 변경: shockedEnemy
         Invoke("OffShocked", 2.0f);                         // 2초 후에 쇼크 상태 해제
@@ -240,7 +281,10 @@ public class EnemyMove : MonoBehaviour
     private void OnDie()
     {
         gameManager.currentStageEnemy--;
-        Debug.Log("Enemy Dead!");
+        if (!Boss)
+            Debug.Log("Enemy Dead!");
+        else
+            Debug.Log("Boss Dead!");
         Destroy(gameObject);
     }
 
@@ -256,7 +300,7 @@ public class EnemyMove : MonoBehaviour
         timer += Time.deltaTime;
         if (timer > waitingTime && AttackScan == true) // 일반공격
         {
-            if (rayHit.collider != null && rayHit.collider.tag == "Player")
+            if (rayHit.collider != null && rayHit.collider.tag == "Player" && !Boss)
             {
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
@@ -270,7 +314,7 @@ public class EnemyMove : MonoBehaviour
                 {
                     anim.SetBool("isAttacking", true);
                     attackReady = true;
-                    Invoke("EnemyAttack", 0.5f);
+                    Invoke("EnemyAttack", 0.3f);
                     AttackStack += 1;
                     //Debug.Log("AttackStack: " + AttackStack);
                 }
@@ -351,7 +395,7 @@ public class EnemyMove : MonoBehaviour
         }
         else
         {
-            rigid.velocity = new Vector2(0, 0);
+            rigid.velocity = new Vector2(0, rigid.velocity.y);
         }
     }
 
