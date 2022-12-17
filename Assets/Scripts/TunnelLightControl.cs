@@ -14,10 +14,10 @@ public class TunnelLightControl : MonoBehaviour
 
     void Start()
     {
-        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
+        states = false;
         lighting = GameObject.Find("Light_Parent").transform.Find("Light");
         lighting.gameObject.SetActive(false);
-    }
+}
 
 
     void Update()

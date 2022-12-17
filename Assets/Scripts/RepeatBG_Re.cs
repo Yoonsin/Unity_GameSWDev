@@ -24,6 +24,8 @@ public class RepeatBG_Re : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        float BGspeed = 0.5f;
+        repeatflag = false;
         defaultPos = Camera.main.WorldToViewportPoint(this.transform.position);
         // https://www.youtube.com/watch?v=icYDYFFBVCc 후에 원경 카메라에 꽉차게 매핑해주는 코드 start에 추가하기
     }

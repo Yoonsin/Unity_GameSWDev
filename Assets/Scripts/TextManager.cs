@@ -35,7 +35,10 @@ public class TextManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        onTM = false;
+        textCnt = 14;
+        textFlag = true;
+        textAniFlag = false;
         textdata = TextData.GetComponent<TextData>();
         length = textdata.getLength(id);
         //Time.timeScale = 0;
