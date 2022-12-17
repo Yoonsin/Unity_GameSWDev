@@ -182,13 +182,12 @@ MonoBehaviour:
   gameManager: {fileID: 5376258187808011097, guid: 4f80c505637f74e41ac7fb5aa4c04fc4, type: 3}
   player: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
   tunnel: {fileID: 5019951793429226193, guid: 872ce6f2600928e4583994de8041be31, type: 3}
-  InterOb: {fileID: 4073997065494427409, guid: 3e60833e83821134dace6cd1917f19d0, type: 3}
+  InterOb: {fileID: 0}
   tunnelL: {fileID: 5806625468197226766, guid: 2f93f44ee91fd46418e9568c992e2997, type: 3}
   movePower: 1
-  enemyHP: 5
-  enemyAD: 1
   canCounterattack: 0
   touchedSword: 0
+  Boss: 0
 --- !u!70 &1902221546308621833
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
