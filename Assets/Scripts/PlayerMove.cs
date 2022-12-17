@@ -127,14 +127,14 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 공격 *
-        if (Input.GetKeyDown(KeyCode.LeftControl)  && gameManager.playerAttack > 0)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && gameManager.playerAttack > 0 && anim.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             isAttacking = true;
             anim.SetTrigger("" + (5 - gameManager.playerAttack));
             //Debug.Log("Attack " + (5 - gameManager.playerAttack));
         }
         // 반격
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z) && anim.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             isInterrupting = true;
         }
@@ -275,6 +275,8 @@ public class PlayerMove : MonoBehaviour
     
     private void Respawn()
     {
+        // 밑에 다 지우고 씬 리로드 시키기
+
         // 플레이어 원위치
         //spriteRenderer.flipX = false;
         gameObject.transform.position = new Vector3(-5, -3, -1);
