@@ -26,9 +26,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        playerHP = 4;
-        playerAttack = 4;
-        startUiAlpha = 0.7f;
         startUi.color = new Color(0, 0, 0, startUiAlpha);
         Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤
         currentStage = 1;

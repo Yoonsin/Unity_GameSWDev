@@ -21,24 +21,25 @@ public class EnemyMove : MonoBehaviour
     Vector2 dection;
     Animator anim;
     SpriteRenderer spriteRenderer;
-
     bool isTracing = false;
+    bool isAttack = false;
     GameObject traceTarget;
     private Transform scan;
 
     int nextMove;
-    int enemyHP = 5;
+    public int enemyHP = 5; // 수정: private으로 바꾸기
+    public int enemyAD = 1;
     int movementFlag = 0;
     int AttackStack; // 강격
     [SerializeField]
     bool canCounterattack = false; // 반격 가능 여부
-    bool isCounted = false; // 반격 진행 중 여부
     float preStimer;    // 강공 준비 시간 중 반격 가능해질 때까지 기다리기
     bool AttackScan = false;
 
     float timer;        // 딜레이
     float waitingTime;
 
+    float Stimer;       // 강격 딜레이
     float SwaitingTime;
     bool isAttacking = false;
     bool attackReady = false;
@@ -55,15 +56,18 @@ public class EnemyMove : MonoBehaviour
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        player = GameObject.Find("Player").GetComponent<PlayerMove>();
+
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
+        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
+        tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
+        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<PlayerMove>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        movePower = 1f;
         spos_x = this.gameObject.transform.position;
         StartCoroutine("ChangeMovement");
         nextMove = Random.Range(-1, 1);
@@ -74,18 +78,13 @@ public class EnemyMove : MonoBehaviour
         timer = 0.0f;
         waitingTime = 0.5f;
         AttackStack = 0;
-        AttackScan = false;
-        SwaitingTime = 1.5f;
+        Stimer = 0.0f;
+        SwaitingTime = 3.0f;    // 원래 0.8f
         canCounterattack = false; // 반격 가능 여부
-        isCounted = false;  // 반격 진행 중 여부
         preStimer = SwaitingTime / 2.0f;    // 반격 가능해질때까지 기다리는 타이머
         isAttacking = false;
         attackReady = false;
         touchedSword = false;
-        isTracing = false;
-        enemyHP = 5;
-        movementFlag = 0;
-        traceTarget = null;
     }
 
     IEnumerator ChangeMovement()
@@ -111,9 +110,7 @@ public class EnemyMove : MonoBehaviour
     void Update()
     {
         if (player.isInterrupting == true)
-        {
             OnInterrupt();
-        }
         
         // 레이어 검사 때문에 Update에서 수행
         if (gameObject.layer != 7)  // 쇼크 상태가 아니면 움직여라
@@ -140,46 +137,46 @@ public class EnemyMove : MonoBehaviour
         {
             if (preStimer < 0)
             {
+                canCounterattack = true;     // 반격 가능
                 preStimer = SwaitingTime / 2.0f;
                 Debug.Log("반격 해!!");
-                canCounterattack = true;     // 반격 가능
             }
             else if (!canCounterattack)
             {
                 preStimer -= Time.deltaTime;  // 타이머 발동
             }
         }
-        if (player.anim)
+
+        if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
         {
-            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter") && touchedSword && (canCounterattack || (tunnel.Tun && !tunnelL.states)))
-            {
-                isCounted = true;
-                if (tunnel.Tun == true && !tunnelL.states)
-                    Debug.Log("터널 암살!");
-                Debug.Log("반격 중 적 강공");
-                OnShocked();
-            }
-            if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword && (isCounted || (tunnel.Tun && !tunnelL.states)))
-            {
-                isCounted = false;
-                if (tunnel.Tun == true && !tunnelL.states)
-                    Debug.Log("터널 암살!");
-                Debug.Log("반격 성공!");
-                canCounterattack = false;
-                preStimer = SwaitingTime / 2.0f;
-                enemyHP = 0;
-                OnDie();
-            }
+            if (tunnel.Tun == true && !tunnelL.states)
+                Debug.Log("터널 암살!");
+            Debug.Log("반격 중 적 강공");
+            OnShocked();
+        }
+        else if (player.anim.GetCurrentAnimatorStateInfo(0).IsName("attack_4") && touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
+        {
+            if (tunnel.Tun == true && !tunnelL.states)
+                Debug.Log("터널 암살!");
+            Debug.Log("반격 성공!");
+            //false는 PlayerMove 컴포넌트의 endCounter()에서 실행
+            //player.GetComponent<Animator>().SetTrigger("isCounter");
+            canCounterattack = false;
+            preStimer = SwaitingTime / 2.0f;
+            enemyHP = 0;
+            OnDie();
         }
     }
 
     public void OnInterrupt()   // 플레이어가 반격 키를 눌렀을 때 실행
     {
-        //Debug.Log("OnInterrupt() " + canCounterattack);
+        player.isInterrupting = false;
+        Debug.Log("OnInterrupt() " + canCounterattack);
         if (touchedSword && (canCounterattack == true || (tunnel.Tun == true && !tunnelL.states)))
         {
-            player.anim.SetTrigger("onCounter"); //플레이어 카운터 애니 재생
+            player.anim.SetBool("isCounter", true); //플레이어 카운터 애니 재생
         }
+
     }
 
     
@@ -188,12 +185,9 @@ public class EnemyMove : MonoBehaviour
     {
         anim.SetBool("isDamaged", true);
         enemyHP--;
-        Debug.Log("enemy_OnDamaged: " + enemyHP);
         gameManager.AttackCntDown();
-
         if (gameManager.playerAttack < 1)   // 강공이었으면 3초 공격 쉬기 *
         {
-            Debug.Log("강공!");
             enemyHP -= 1;   // 강공 추가 데미지
             if (!canCounterattack)
                 OnShocked();
@@ -203,7 +197,7 @@ public class EnemyMove : MonoBehaviour
         {
             player.attackTimer = 3;
         }
-        Debug.Log("EnemyMove_OnDamaged player attacked " + gameManager.playerAttack);
+        Debug.Log("player attacked " + gameManager.playerAttack);
         Invoke("Sterne", 0.5f);
         Debug.Log("Enemy HP: " + enemyHP);
         if (enemyHP < 1)
@@ -251,6 +245,8 @@ public class EnemyMove : MonoBehaviour
         {
             if (rayHit.collider != null && rayHit.collider.tag == "Player")
             {
+                Debug.Log(rayHit.collider.tag);
+
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
                     attackReady = true;
@@ -265,23 +261,20 @@ public class EnemyMove : MonoBehaviour
                     attackReady = true;
                     Invoke("EnemyAttack", 0.5f);
                     AttackStack += 1;
-                    //Debug.Log("AttackStack: " + AttackStack);
+                    Debug.Log("AttackStack: " + AttackStack);
                 }
             }
             else
             {
-                //Debug.Log("범위에 없음");
+                Debug.Log("범위에 없음");
             }
             timer = 0;
         }
     }
     public void EnemyAttack()
     {
-        Debug.Log("Enemy Attacks Player!!");
-        if (rayHit.collider != null && rayHit.collider.tag == "Player")
-        {
-            player.OnDamaged(rigid.transform.position);
-        }
+        Debug.Log("Player Attack!!");
+        player.OnDamaged(rigid.transform.position);
         anim.SetBool("isAttacking", false);
         attackReady = false;
     }
@@ -291,6 +284,7 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("강격 준비 끝!");
         isAttacking = false;
         canCounterattack = false;    // 반격 불가
+        Debug.Log(rayHit.collider != null && rayHit.collider.tag == "Player");
         if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
             player.OnDamaged(rigid.transform.position); 
@@ -360,6 +354,7 @@ public class EnemyMove : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             isTracing = true;
+            isAttack = true;
             anim.SetBool("isWalking", true);
         }
     }

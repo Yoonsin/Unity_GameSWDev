@@ -37,9 +37,7 @@ public class EnemyGenerator : MonoBehaviour
                 //Debug.Log("max " + (gameManager.wallX[stage + 1] - 3.0f));
                 float x = Random.Range(gameManager.wallX[stage] + 5.0f, gameManager.wallX[stage + 1] - 3.0f);
                 //Debug.Log("x: " + x);
-                GameObject enemy = Instantiate(enemyPrefab);
-                enemy.transform.position = new Vector2(x, -0.5f);
-                //enemy.player = GameObject.Find("Player");
+                Instantiate(enemyPrefab).transform.position = new Vector2(x, -0.5f);
             }
         }
     }

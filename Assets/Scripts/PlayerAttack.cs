@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// 검 콜라이더 위치: player->bone1->bone2->bone3->bone12->bone52->bone13->bone14->bone55
+
 public class PlayerAttack : MonoBehaviour
 {
     public PlayerMove player;
@@ -24,7 +24,6 @@ public class PlayerAttack : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy")
         {
-            //Debug.Log("playerAttack_TrrigerEnter: Enemy");
             Enemy = other.GetComponent<EnemyMove>();
 
             // 적과 검 충돌 알림
@@ -33,12 +32,13 @@ public class PlayerAttack : MonoBehaviour
             // 공격
             if (player.isAttacking == true)
             {
-                //Debug.Log("playerAttack_TrrigerEnter: Enemy Attacked");
+                Debug.Log("Enemy Attacked");
                 player.isAttacking = false;
                 Enemy.OnDamaged();
+
             }
 
-            //Enemy = null;
+            Enemy = null;
         }
     }
     void OnTriggerExit2D(Collider2D other)
