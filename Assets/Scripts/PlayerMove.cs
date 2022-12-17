@@ -19,6 +19,7 @@ public class PlayerMove : MonoBehaviour
 
     private float speed = 7.0f;     // 이동 속도
     public float jumpPower;         // 점프력
+    private int jumpCnt = 1;        // 점프 횟수
 
     private bool isDamaged = false;       // 피격 상태 판별
     private float damagedTimer = 1;       // 피격 상태 지속 시간
@@ -37,7 +38,6 @@ public class PlayerMove : MonoBehaviour
     public bool isInterrupting = false; // 반격을 시도했는지 확인
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
-    int combo = 1;
 
     void Awake()
     {
@@ -47,9 +47,25 @@ public class PlayerMove : MonoBehaviour
         anim = GetComponent<Animator>();
         Physics2D.IgnoreCollision(GetComponent<CapsuleCollider2D>(), GetComponentsInChildren<BoxCollider2D>()[0]);  // 부모자식 간의 충돌 무시
         playerLight = GameObject.Find("Player").transform.Find("Player_light");
-        InterOb = GameObject.Find("Switchs").GetComponent<InteractiveObject>();
-        tunnelL = GameObject.Find("Light_Parent").GetComponent<TunnelLightControl>();
-        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
+    }
+
+    void Start()
+    {
+        gameObject.layer = 8;   // 플레이어의 레이어를 Player로 함
+        damagedBgAlpha = 0;
+        damagedBg.color = new Color(1, 1, 1, 0);
+
+        jumpCnt = 1;
+        speed = 7.0f;
+        isDamaged = false;
+        damagedTimer = 1;
+
+        isShaked = false; // 피격시 카메라 흔들림 여부 => cameraMove 스크립트에서 사용
+
+        attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
+        isAttacking = false;
+        isInterrupting = false; // 반격을 시도했는지 확인
+        interactiveObject = null;
     }
 
     // 매 프레임 호출. 주로 단발적 이벤트.
@@ -82,12 +98,15 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 점프
-        if ((Input.GetButtonDown("Jump") || Input.GetKeyDown("w") || Input.GetKeyDown("up")) && !anim.GetBool("isJumping"))
+        if ((Input.GetButtonDown("Jump") || Input.GetKeyDown("w") || Input.GetKeyDown("up")) && jumpCnt > 0)
         {
+            jumpCnt--;
             isAttacking = false;
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
         }
+        if ((Input.GetButtonUp("Jump") || Input.GetKeyUp("w") || Input.GetKeyUp("up")) && anim.GetBool("isJumping"))
+            anim.SetBool("isJumping", false);
 
         // 방향 전환
         if (Input.GetAxisRaw("Horizontal") < 0)
@@ -111,15 +130,13 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl)  && gameManager.playerAttack > 0)
         {
             isAttacking = true;
-            //Debug.Log(""+combo);
-            anim.SetTrigger(""+combo);
-            
+            anim.SetTrigger("" + (5 - gameManager.playerAttack));
+            //Debug.Log("Attack " + (5 - gameManager.playerAttack));
         }
         // 반격
         if (Input.GetKeyDown(KeyCode.Z))
         {
             isInterrupting = true;
-            
         }
 
         // 상호작용
@@ -139,24 +156,14 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    public void StartCombo()
-    {
-        isAttacking = true;
-        if (combo < 5)
-        {
-            combo++;
-        }
-    }
-
-    public void FinishAni()
+    public void FinishAttackAnim()
     {
         isAttacking = false;
-        combo = 1;
-    }
-
-    public void endCounter()
-    {
-        anim.SetBool("isCounter", false); //플레이어 카운터 애니 중지
+        anim.ResetTrigger("onCounter");
+        anim.ResetTrigger("1");
+        anim.ResetTrigger("2");
+        anim.ResetTrigger("3");
+        anim.ResetTrigger("4");
     }
 
     // 주로 지속적 이벤트.
@@ -167,20 +174,24 @@ public class PlayerMove : MonoBehaviour
         // x축 이동은 x * speed로, y축 이동은 기존의 속력 값(현재는 중력)
         if (gameObject.layer != 9)  // 피격시 반동을 위해서 제어할 수 없게 함
             rigid.velocity = new Vector2(key * speed, rigid.velocity.y);
-
+        
         // Landing Platform, 레이 캐스트
         if (rigid.velocity.y < 0)
         {
             Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
 
             if (rayHit.collider != null)
             {
-                if (rayHit.distance < 0.5f)  // 플레이어 크기의 절반
+                if (rayHit.distance < 0.1f)
+                {
+                    Debug.Log("착지");
+                    jumpCnt = 1;
                     anim.SetBool("isJumping", false);
+                }
             }
         }
-
+        
         // 열린 문 닫기
         if (rigid.position.x >= gameManager.wallX[gameManager.currentStage] + 2.0f && gameManager.isOpened)
         {
@@ -203,20 +214,11 @@ public class PlayerMove : MonoBehaviour
             OnDamaged(collision.transform.position);
         }
         */
-        // 적 공격 코드
-        if (collision.gameObject.tag == "Enemy_Attack")
-        {
-            damagedTimer = 1;
-            isDamaged = true;
-            OnDamaged(collision.transform.position);
-        }
-
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("collision: " + collision.gameObject.tag);
+        //Debug.Log("collision: " + collision.gameObject.tag);
         if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
         {
             collision.gameObject.SetActive(false);
@@ -239,10 +241,11 @@ public class PlayerMove : MonoBehaviour
         gameObject.layer = 9;   // PlayerDamaged 레이어 (플레이어 무적 레이어)
 
         // 배경 이펙트
-        StartCoroutine(Shake(0.2f, 0.15f));
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(Shake(0.2f, 0.15f));
         damagedBgAlpha = 0.2f * (5 - gameManager.playerHP);
         damagedBg.color = new Color(1, 1, 1, damagedBgAlpha);
-        StartCoroutine("reduceDamagedBg");
+            StartCoroutine("reduceDamagedBg");
 
         // 플레이어 투명도 조절
         //spriteRenderer.color = new Color(1, 1, 1, 0.4f);
