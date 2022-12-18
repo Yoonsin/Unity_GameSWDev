@@ -16,9 +16,9 @@ public class GameManager : MonoBehaviour
     private Image startUi;
     private Image endUi;
 
-    public float[] wallX = new float[5];// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
-    public float[] stageX = new float[5]; //스테이지 X좌표 
-    public int[] enemyNum = new int[4] { 2, 2, 2, 1 };  // 스테이지별 몬스터 수
+    public float[] wallX;// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
+    public float[] stageX; //스테이지 X좌표 
+    public int[] enemyNum;  // 스테이지별 몬스터 수
     public int currentStageEnemy = 0;   // 현재 남은 적 수
     public int currentStage = 0;        // 현재 스테이지
     public bool isOpened = false;       // 스테이지의 문이 열렸는가?
@@ -47,10 +47,13 @@ public class GameManager : MonoBehaviour
             wallX[i] = GameObject.Find("Wall").transform.GetChild(i).position.x;
             Debug.Log("wall " + wallX[i]);
         }
+        stageX = new float[5] { 46.9f, 95.7f,146.2f,190.7f,196.5f };
+        enemyNum = new int[4] { 2, 2, 2, 1 };
     }
 
     public void startButtonDown()
     {
+
         startUiObj.SetActive(false); //스타트 ui 전부 비활성화 시키기
         TextManager.onTM = true; //텍스트 매니저 스타트
     }
