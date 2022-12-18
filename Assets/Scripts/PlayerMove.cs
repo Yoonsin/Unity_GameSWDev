@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using static UnityEditor.VersionControl.Asset;
 using System;
 using System.Threading;
+using Unity.VisualScripting;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -43,6 +44,7 @@ public class PlayerMove : MonoBehaviour
     public int childCnt = 0; //아이 위치 옮겨준 횟수
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
+    public bool isFinalBomb = false;
 
     void Awake()
     {
@@ -212,9 +214,15 @@ public class PlayerMove : MonoBehaviour
             GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
             gameManager.isOpened = false;
             gameManager.currentStage++;
-
-            if (gameManager.currentStage != 4) //마지막 스테이지는 보스 스테이지 이므로 제외 (if문 안써주면 배열 인덱스 오류남)
+            if(gameManager.currentStage == 5) //스테이지 끝이면
+            {
+                gameManager.endUiObj.SetActive(true);
+                Time.timeScale = 0;
+            }
+            else
+            {
                 gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
+            }
 
         }
     }
@@ -237,15 +245,23 @@ public class PlayerMove : MonoBehaviour
         //Debug.Log("collision: " + collision.gameObject.tag);
         if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
         {
-            collision.gameObject.SetActive(false); //부딫힌 물체는 비활성화 
-            child.transform.position = new Vector3(gameManager.childX[childCnt], child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
-            childCnt++;
-            textManager.setFlag(true); //대화창 활성화;
-            textManager.showText(); //되자마자 대화창 다시 띄우기
-            Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
+            if((gameManager.currentStage == 4 && isFinalBomb == true) || gameManager.currentStage != 4) //보스 스테이지에서는 폭탄을 해체해야 다음 스테이지로 넘어갈 수 있음
+            {
+                GameObject coll = collision.gameObject;
+                coll.transform.position = new Vector3(gameManager.stageX[childCnt + 1], coll.transform.position.y, coll.transform.position.z); //스테이지 블록은 다음 스테이지로 옮기기
+                child.transform.position = new Vector3(gameManager.stageX[childCnt], child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
+                childCnt++;
+                textManager.setFlag(true); //대화창 활성화;
+                textManager.showText(); //되자마자 대화창 다시 띄우기
+                Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
 
-           
+                if (gameManager.currentStage == 4 && isFinalBomb == true) //스테이지가 다 끝났다면
+                {
+                    coll.SetActive(false); //스테이지 블록 비활성화
+                }
 
+
+            }
         }
     }
 

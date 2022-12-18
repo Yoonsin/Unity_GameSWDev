@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -11,18 +12,23 @@ public class GameManager : MonoBehaviour
     public int playerAttack = 4;
     private float startUiAlpha = 0.7f;
     public GameObject startUiObj;
+    public GameObject endUiObj;
     private Image startUi;
+    private Image endUi;
 
     public float[] wallX = new float[5];// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
-    public float[] childX = new float[4]; //스테이지별 아이의 X좌표 
-    public int[] enemyNum = new int[3] { 2, 2, 2 };  // 스테이지별 몬스터 수
+    public float[] stageX = new float[5]; //스테이지 X좌표 
+    public int[] enemyNum = new int[4] { 2, 2, 2, 1 };  // 스테이지별 몬스터 수
     public int currentStageEnemy = 0;   // 현재 남은 적 수
     public int currentStage = 0;        // 현재 스테이지
     public bool isOpened = false;       // 스테이지의 문이 열렸는가?
 
     private void Awake()
     {
-        startUi = startUiObj.GetComponent<Image>(); //ui 이미지 받아오기
+        startUi = startUiObj.GetComponent<Image>(); //startUi 이미지 받아오기
+        endUi = endUiObj.GetComponent<Image>(); //endUi 이미지 받아오기
+        endUi.color = new Color(0, 0, 0, startUiAlpha); //endUI는 미리 이미지 설정
+        endUiObj.SetActive(false); //게임 시작할 때는 endUi 비활성화
     }
 
     private void Start()
@@ -45,14 +51,14 @@ public class GameManager : MonoBehaviour
 
     public void startButtonDown()
     {
-        /* Color color = startUi.color;
-         color.a = 0f;
-         startUi.color = color;*/
-
-        //Time.timeScale = 1; //버튼 누르면 시간 활성화
         startUiObj.SetActive(false); //스타트 ui 전부 비활성화 시키기
         TextManager.onTM = true; //텍스트 매니저 스타트
+    }
 
+    public void reStartButtonDown()
+    {
+        //씬 리로드
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     // 플레이어 체력 관리

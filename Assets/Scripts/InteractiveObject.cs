@@ -50,14 +50,22 @@ public class InteractiveObject : MonoBehaviour
                 player.interactiveObject = null;
                 // 문 열기
                 Debug.Log("삭제할 벽: " + GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).name);
-                if (GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).name != "FinalWall")   // 마지막 벽은 부수면 안 됨
+                GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(false);
+                gameManager.isOpened = true;
+              
+                // 폭탄 해체 
+                if (gameManager.currentStage == 4) //보스 스테이지에서 폭탄 해체하면
                 {
-                    GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(false);
-                    gameManager.isOpened = true;
+                    player.isFinalBomb = true ; //폭탄 해체 했다!
+                    this.gameObject.SetActive(false); //폭탄 이동 하지말고 안보이게 하기
+                    
                 }
-                // 폭탄 해체
-                this.transform.position = new Vector3(bombX[gameManager.currentStage], this.transform.position.y, this.transform.position.z);
-                GameObject.Find("Switches").transform.position = new Vector3(switchX[gameManager.currentStage], GameObject.Find("Switches").transform.position.y, GameObject.Find("Switches").transform.position.z);
+                else
+                {
+                    this.transform.position = new Vector3(bombX[gameManager.currentStage], this.transform.position.y, this.transform.position.z);
+                    GameObject.Find("Switches").transform.position = new Vector3(switchX[gameManager.currentStage], GameObject.Find("Switches").transform.position.y, GameObject.Find("Switches").transform.position.z);
+                }
+                
                 //this.transform.GetChild(gameManager.currentStage - 1).gameObject.SetActive(false);
             }
             Btrigger = false;
