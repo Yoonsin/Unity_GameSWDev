@@ -15,7 +15,7 @@ public class TunnelControl : MonoBehaviour
     {
         Tun = false;
         light = GetComponentInChildren<Light2D>();
-        Invoke("TurnOn", 50000);
+        Invoke("TurnOn", 5);
     }
 
     

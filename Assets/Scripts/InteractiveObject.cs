@@ -9,6 +9,7 @@ public class InteractiveObject : MonoBehaviour
     public TunnelControl tunnel;
 
     public float[] bombX = new float[4]; //BombUnit의 X 좌표 (스테이지 넘어갈 때마다 위치 옮겨줄 예정)
+    public float[] switchX = new float[4]; //switch의 X 좌표 (스테이지 넘어갈 때마다 위치 옮겨줄 예정)
     public bool trigger = false;
     public bool Btrigger = false;
 
@@ -27,17 +28,17 @@ public class InteractiveObject : MonoBehaviour
 
     private void Update()
     {
-        if (this.name == "Switchs")
+        if (this.name == "Switches")
         {
             if (trigger == true)
             {
-                GameObject.Find("Switchs").transform.Find("switch_0").gameObject.SetActive(false);
-                GameObject.Find("Switchs").transform.Find("switch_1").gameObject.SetActive(true);
+                GameObject.Find("Switches").transform.Find("switch_0").gameObject.SetActive(false);
+                GameObject.Find("Switches").transform.Find("switch_1").gameObject.SetActive(true);
             }
             else if (trigger == false)
             {
-                GameObject.Find("Switchs").transform.Find("switch_0").gameObject.SetActive(true);
-                GameObject.Find("Switchs").transform.Find("switch_1").gameObject.SetActive(false);
+                GameObject.Find("Switches").transform.Find("switch_0").gameObject.SetActive(true);
+                GameObject.Find("Switches").transform.Find("switch_1").gameObject.SetActive(false);
             }
         }
         if (this.name == "BombUnit" && gameManager.currentStageEnemy == 0)
@@ -56,6 +57,7 @@ public class InteractiveObject : MonoBehaviour
                 }
                 // 폭탄 해체
                 this.transform.position = new Vector3(bombX[gameManager.currentStage], this.transform.position.y, this.transform.position.z);
+                GameObject.Find("Switches").transform.position = new Vector3(switchX[gameManager.currentStage], GameObject.Find("Switches").transform.position.y, GameObject.Find("Switches").transform.position.z);
                 //this.transform.GetChild(gameManager.currentStage - 1).gameObject.SetActive(false);
             }
             Btrigger = false;
