@@ -3,19 +3,25 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - InteractiveObject
+  - Weapon
+  - Enemy_Attack
+  - Switch
+  - Stage
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Platform
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Enemy
+  - EnemyShocked
+  - Player
+  - PlayerDamaged
+  - InteractiveObject
   - 
   - 
   - 
