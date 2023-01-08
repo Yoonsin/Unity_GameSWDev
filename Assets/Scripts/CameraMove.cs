@@ -7,12 +7,12 @@ using UnityEngine;
 public class CameraMove : MonoBehaviour
 {
     Vector3 pos;
-    GameObject player;
+    public GameObject player;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player"); //플레이어 게임 오브젝트 찾아서 반환
+        
     }
 
     // Update is called once per frame
