@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\TextData.cs" />
     <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraShake.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Fonts\OFL.txt" />

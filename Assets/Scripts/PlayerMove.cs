@@ -265,6 +265,8 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    public GameObject mainCamera; //카메라 오브젝트 불러오기
+
     public void OnDamaged(Vector2 targetPos)
     {
      
@@ -278,7 +280,8 @@ public class PlayerMove : MonoBehaviour
 
         // 배경 이펙트
         if (gameObject.activeInHierarchy)
-            StartCoroutine(Shake(0.2f, 0.15f));
+            mainCamera.GetComponent<CameraShake>().ShakeCamera(); //카메라 진동 코루틴 카메라 내부 스크립트로 이동, 카메라 오브젝트에 접근하여 함수 실행
+            //StartCoroutine(Shake(0.2f, 0.15f));
         damagedBgAlpha = 0.2f * (5 - gameManager.playerHP);
         damagedBg.color = new Color(1, 1, 1, damagedBgAlpha);
             StartCoroutine("reduceDamagedBg");
@@ -326,6 +329,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    /* -CameraShake.cs로 이사했습니다-
     private IEnumerator Shake(float amount, float duration)
     {
         cameraOriginPos = Camera.transform.localPosition;
@@ -341,4 +345,5 @@ public class PlayerMove : MonoBehaviour
         isShaked = false;
         Camera.transform.localPosition = cameraOriginPos;
     }
+    */
 }

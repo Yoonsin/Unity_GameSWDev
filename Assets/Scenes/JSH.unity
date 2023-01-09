@@ -2109,6 +2109,7 @@ GameObject:
   - component: {fileID: 460333266}
   - component: {fileID: 460333265}
   - component: {fileID: 460333264}
+  - component: {fileID: 460333267}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2215,6 +2216,20 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &460333267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460333262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d26c82919c8539f4592de87e6290efe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAmount: 0.2
+  shakeDuration: 0.15
 --- !u!1 &473764024
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2899,7 @@ MonoBehaviour:
   childCnt: 0
   interactiveObject: {fileID: 0}
   isFinalBomb: 0
+  mainCamera: {fileID: 0}
 --- !u!70 &774494279
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -6881,7 +6897,7 @@ MonoBehaviour:
   cameraSetX: 0
   cameraSetY: 3
   cameraSetZ: -10
-  cameraSpeed: 6
+  cameraSpeed: 5
 --- !u!1 &1782198815
 GameObject:
   m_ObjectHideFlags: 0
@@ -9322,6 +9338,10 @@ PrefabInstance:
       propertyPath: damagedBg
       value: 
       objectReference: {fileID: 1718180356}
+    - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 460333262}
     - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
       propertyPath: gameManager
       value: 
