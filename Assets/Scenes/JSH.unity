@@ -2672,6 +2672,7 @@ MonoBehaviour:
   tunnelL: {fileID: 766453434}
   child: {fileID: 0}
   anim: {fileID: 0}
+  dashPower: 0
   jumpPower: 20
   damagedBg: {fileID: 1718180356}
   Camera: {fileID: 248134857}
@@ -8861,6 +8862,14 @@ PrefabInstance:
       propertyPath: damagedBg
       value: 
       objectReference: {fileID: 1718180356}
+    - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
+      propertyPath: dashPower
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
+      propertyPath: attackTimer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
       propertyPath: gameManager
       value: 

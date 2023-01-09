@@ -59,9 +59,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void reStartButtonDown()
-    {
-        //씬 리로드
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    {    
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);  //씬 리로드
     }
 
     // 플레이어 체력 관리
