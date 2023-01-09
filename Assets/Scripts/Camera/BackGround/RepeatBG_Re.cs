@@ -5,6 +5,7 @@ using UnityEngine;
 //https://www.youtube.com/watch?v=HPhJngP695Y 참고
 //https://www.youtube.com/watch?v=KUQAULcpYZU 근데 카메라 움직이게 설정하면 배경어떡함?
 //어떡하긴 카메라 움직임을 여기 배경에 다 더해주면 되는거 아님?
+//카메라와 배경 분리해서 해결! -2023.1.9-
 
 public class RepeatBG_Re : MonoBehaviour
 {

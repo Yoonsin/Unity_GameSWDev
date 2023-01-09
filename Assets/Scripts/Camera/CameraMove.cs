@@ -21,14 +21,14 @@ public class CameraMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        cameraPosition.y = player.transform.position.y + cameraSetY; //캐릭터 점프 뛰면 배경도 딸려 올라가는 문제 생김, 초기에만 y좌표 지정해주고 변경 X 필요, 현재는 임시로 작성
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         cameraPosition.x = player.transform.position.x + cameraSetX;
-        cameraPosition.y = player.transform.position.y + cameraSetY;
+
         cameraPosition.z = player.transform.position.z + cameraSetZ;
 
         transform.position = Vector3.Lerp(transform.position, cameraPosition, cameraSpeed * Time.smoothDeltaTime);

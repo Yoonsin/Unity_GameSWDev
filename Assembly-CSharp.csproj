@@ -63,7 +63,7 @@
     <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
     <Compile Include="Assets\Scripts\PlayerAttack.cs" />
     <Compile Include="Assets\Simple 2D Platformer BE2\ReadMe\Scripts\ReadmeBE2.cs" />
-    <Compile Include="Assets\Scripts\Camera\RepeatBG_Re.cs" />
+    <Compile Include="Assets\Scripts\Camera\BackGround\RepeatBG_Re.cs" />
     <Compile Include="Assets\Scripts\TextManager.cs" />
     <Compile Include="Assets\Scripts\PlayerMove.cs" />
     <Compile Include="Assets\Scripts\EnemyMove.cs" />
@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\TextData.cs" />
     <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraShake.cs" />
+    <Compile Include="Assets\Scripts\Camera\BackGround\RedesignedRepeatBG.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Fonts\OFL.txt" />
