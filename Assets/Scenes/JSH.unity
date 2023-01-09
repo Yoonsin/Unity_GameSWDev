@@ -8864,7 +8864,11 @@ PrefabInstance:
       objectReference: {fileID: 1718180356}
     - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
       propertyPath: dashPower
-      value: 5
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
+      propertyPath: attackTimer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
       propertyPath: gameManager

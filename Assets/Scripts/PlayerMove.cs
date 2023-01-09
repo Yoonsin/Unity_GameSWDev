@@ -24,7 +24,9 @@ public class PlayerMove : MonoBehaviour
 
     private float speed = 7.0f;     // 이동 속도
     public float dashPower = 5.0f;
-    private bool isDash = false;
+    private bool isDashing = false;
+    private bool canDash = true;
+    private float coolTime_Dash = 1.5f;
     public float jumpPower;         // 점프력
     private int jumpCnt = 1;        // 점프 횟수
 
@@ -97,18 +99,6 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        // 공격 딜레이 및 공격 횟수 초기화 *
-        if (attackTimer >= 0)
-        {
-            //Debug.Log("attackTimer " + attackTimer);
-            attackTimer -= Time.deltaTime;
-        } else if (attackTimer > -1)    // 타이머 끝났고 초기값보다 클 때
-        {
-
-            Debug.Log("playerAttack reset");
-            gameManager.playerAttack = 4;
-            attackTimer = -1;
-        }
 
         // 점프
         if ((Input.GetButtonDown("Jump") || Input.GetKeyDown("w") || Input.GetKeyDown("up")) && jumpCnt > 0)
@@ -121,17 +111,17 @@ public class PlayerMove : MonoBehaviour
         if ((Input.GetButtonUp("Jump") || Input.GetKeyUp("w") || Input.GetKeyUp("up")) && anim.GetBool("isJumping"))
             anim.SetBool("isJumping", false);
 
-        // 방향 전환
-        if (Input.GetAxisRaw("Horizontal") < 0)
+        // 방향 전환. 대쉬 중에는 방향전환 불가
+        if (Input.GetAxisRaw("Horizontal") < 0 && isDashing == false) 
         {
             transform.localScale = new Vector3(3, 3, 3);   // Left flip
-        } else if (Input.GetAxisRaw("Horizontal") > 0)
+        } else if (Input.GetAxisRaw("Horizontal") > 0 && isDashing == false)
         {
             transform.localScale = new Vector3(-3, 3, 3);   // Right flip
         }
         
         // 걷기 애니메이션
-        if (rigid.velocity.normalized.x == 0 ||isDash == true)
+        if (rigid.velocity.normalized.x == 0 ||isDashing == true)
             anim.SetBool("isWalking", false);
         else
         {
@@ -139,10 +129,27 @@ public class PlayerMove : MonoBehaviour
             
         }
 
+
+        
+        // 공격 딜레이 및 공격 횟수 초기화 *
+        if (attackTimer >= 0)
+        {
+            //Debug.Log("attackTimer " + attackTimer);
+            attackTimer -= Time.deltaTime;
+        }
+        else if (attackTimer > -1)    // 타이머 끝났고 초기값보다 클 때
+        {
+
+            Debug.Log("playerAttack reset");
+            gameManager.playerAttack = 4;
+            attackTimer = -1;
+        }
+
         // 공격 *
         if (Input.GetKeyDown(KeyCode.LeftControl) && gameManager.playerAttack > 0 && anim.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             isAttacking = true;
+            Debug.Log(gameManager.playerAttack);
             anim.SetTrigger("" + (5 - gameManager.playerAttack));
             //Debug.Log("Attack " + (5 - gameManager.playerAttack));
         }
@@ -156,17 +163,14 @@ public class PlayerMove : MonoBehaviour
             isInterrupting = false;
         }
         // 대쉬
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C) && !(anim.GetCurrentAnimatorStateInfo(0).IsName("counter")) && canDash == true )
         {
-            //평타 애니 트리거 다 끄고 
-            for(int i=1;i<=4;i++)
-              anim.ResetTrigger(""+ i);
-            anim.SetBool("isJumping", false);
             //대쉬 중에는 무적. 키 입력 불가.( 대쉬 애니 이벤트에 넣기)
-            isDash = true;
+            canDash = false;
+            isDashing = true;
+            Invoke("coolTimeDash", coolTime_Dash); //쿨타임 
             anim.SetTrigger("onDash"); //대쉬 애니 재생
-            Debug.Log("대쉬중");
-            rigid.velocity = new Vector2(0, rigid.velocity.y);
+            rigid.velocity = new Vector2(0, rigid.velocity.y); //걸을 때 대쉬하면 가속 붙음. 그거 방지
             // 방향 전환
             if (transform.localScale.x == 3) //왼쪽
             {
@@ -196,11 +200,15 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    void coolTimeDash()
+    {
+        canDash = true;
+    }
+
     public void FinishDashAnim()
     {
-        isDash = false;
-        anim.SetBool("isWalking", true);
-        rigid.velocity = new Vector2(0, rigid.velocity.y);
+        isDashing = false; //대쉬 끝
+        rigid.velocity = new Vector2(0, rigid.velocity.y); //대쉬 후 반동 없도록 만들기
     }
 
     public void FinishAttackAnim()
@@ -219,9 +227,10 @@ public class PlayerMove : MonoBehaviour
         // 이동 left, a: -1 / right, d: 1 / 안 움직이거나 양쪽 다 누를 때: 0
         float key = Input.GetAxisRaw("Horizontal");
         // x축 이동은 x * speed로, y축 이동은 기존의 속력 값(현재는 중력)
-        Debug.Log(isDash);
-        if (gameObject.layer != 9 && isDash == false)  // 피격시 반동 or 대쉬 중일 때는 아래 구문 제어를 받지 못하게 해야함.
+        if (gameObject.layer != 9 && isDashing == false)  // 피격시 반동 or 대쉬 중일 때는 아래 구문 제어를 받지 못하게 해야함.
             rigid.velocity = new Vector2(key * speed, rigid.velocity.y);
+        
+        
         
         // Landing Platform, 레이 캐스트
         if (rigid.velocity.y < 0)

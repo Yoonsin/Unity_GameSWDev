@@ -212,11 +212,11 @@ public class EnemyMove : MonoBehaviour
             enemyHP -= 1;   // 강공 추가 데미지
             if (!canCounterattack)
                 OnShocked();
-            player.attackTimer = 3;
+            player.attackTimer = 5;
         }
-        else                                // 일반 공격 시 3초동안 공격 없으면 공격 횟수 초기화
+        else                                // 일반 공격 
         {
-            player.attackTimer = 3;
+            player.attackTimer = 5; //3초동안 공격 없으면 공격 횟수 초기화
         }
         Debug.Log("EnemyMove_OnDamaged player attacked " + gameManager.playerAttack);
         Invoke("Sterne", 0.5f);
@@ -331,7 +331,8 @@ public class EnemyMove : MonoBehaviour
         Debug.Log("Enemy Attacks Player!!");
         if (rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            player.OnDamaged(rigid.transform.position);
+            if(!player.anim.GetCurrentAnimatorStateInfo(0).IsName("dash")) //대쉬 안할 때만
+              player.OnDamaged(rigid.transform.position); //플레이어 데미지 받음
         }
         anim.SetBool("isAttacking", false);
         attackReady = false;
@@ -344,7 +345,7 @@ public class EnemyMove : MonoBehaviour
         canCounterattack = false;    // 반격 불가
         if(rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            if (!player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter")) //반격 못했을 때만
+            if (!player.anim.GetCurrentAnimatorStateInfo(0).IsName("counter")&& !player.anim.GetCurrentAnimatorStateInfo(0).IsName("dash")) //반격 못했을 때 or 대쉬 안할 때
             {
                 player.OnDamaged(rigid.transform.position); //플레이어 데미지 받음.
             }
