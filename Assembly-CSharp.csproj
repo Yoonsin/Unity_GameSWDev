@@ -56,14 +56,14 @@
     <Analyzer Include="D:\vs2022\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\CameraMove.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraMove.cs" />
     <Compile Include="Assets\Scripts\EnemyGenerator.cs" />
     <Compile Include="Assets\Scripts\TunnelControl.cs" />
     <Compile Include="Assets\Scripts\InteractiveObject.cs" />
     <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
     <Compile Include="Assets\Scripts\PlayerAttack.cs" />
     <Compile Include="Assets\Simple 2D Platformer BE2\ReadMe\Scripts\ReadmeBE2.cs" />
-    <Compile Include="Assets\Scripts\RepeatBG_Re.cs" />
+    <Compile Include="Assets\Scripts\Camera\BackGround\RepeatBG_Re.cs" />
     <Compile Include="Assets\Scripts\TextManager.cs" />
     <Compile Include="Assets\Scripts\PlayerMove.cs" />
     <Compile Include="Assets\Scripts\EnemyMove.cs" />
@@ -71,6 +71,8 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\TextData.cs" />
     <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraShake.cs" />
+    <Compile Include="Assets\Scripts\Camera\BackGround\RedesignedRepeatBG.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Fonts\OFL.txt" />
@@ -340,6 +342,12 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.8f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.8f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>C:\Program Files\Unity 2021.3.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
