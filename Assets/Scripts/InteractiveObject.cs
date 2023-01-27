@@ -80,7 +80,7 @@ public class InteractiveObject : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            player.interactiveObject = this;
+            //player.interactiveObject = this;
         }
     }
 

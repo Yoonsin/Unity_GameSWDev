@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
     public GameManager gameManager;
     public TextManager textManager;
     public TunnelControl tunnel;
-    public InteractiveObject InterOb;
+    public InteractiveParent InterOb;
     public TunnelLightControl tunnelL;
     public GameObject child;
 
@@ -47,7 +47,7 @@ public class PlayerMove : MonoBehaviour
     public bool isInterrupting = false; // 반격을 시도했는지 확인
     public int childCnt = 0; //아이 위치 옮겨준 횟수
 
-    public InteractiveObject interactiveObject = null;  // 상호작용 물체
+    public InteractiveParent interactiveObject = null;  // 상호작용 물체 (각 물체 스크립트에서 알아서 넣었다 뺐다 함)
     public bool isFinalBomb = false;
 
     void Awake()
@@ -188,11 +188,14 @@ public class PlayerMove : MonoBehaviour
         {
             interactiveObject.Interaction();
         }
-
         // 플레이어 조명(터널에서 스위치 못 올렸을 때만 켜지기)
-        if (tunnel.Tun == true && tunnelL.states == false && InterOb.trigger == true)
+        if (tunnel.Tun == true && tunnelL.states == false)
         {
-            GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
+            if (GameObject.Find("Switches").GetComponent<SwitchInteraction>().trigger == true)
+            {
+                Debug.Log("PlayerMove 플레이어 조명 켠당");
+                GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
+            }
         }
         else if(tunnel.Tun == false || tunnelL.states == false)
         {
@@ -242,7 +245,7 @@ public class PlayerMove : MonoBehaviour
             {
                 if (rayHit.distance < 0.1f)
                 {
-                    Debug.Log("착지");
+                    //Debug.Log("착지");
                     jumpCnt = 1;
                     anim.SetBool("isJumping", false);
                 }

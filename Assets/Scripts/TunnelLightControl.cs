@@ -6,7 +6,7 @@ using static UnityEditor.VersionControl.Asset;
 public class TunnelLightControl : MonoBehaviour
 {
     public TunnelControl tunnel;
-    public InteractiveObject InterOb;
+    public InteractiveParent InterOb;
 
     public bool states = false;
 
@@ -17,6 +17,7 @@ public class TunnelLightControl : MonoBehaviour
         states = false;
         lighting = GameObject.Find("Light_Parent").transform.Find("Light");
         lighting.gameObject.SetActive(false);
+        InterOb = GameObject.Find("Switches").GetComponent<SwitchInteraction>();
 }
 
 

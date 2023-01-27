@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4073997065494427408}
-  - component: {fileID: 4073997065494427409}
+  - component: {fileID: 6668434430161851845}
   - component: {fileID: 4073997065494427411}
   m_Layer: 0
   m_Name: Switchs
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4073997065494427409
+--- !u!114 &6668434430161851845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,14 +44,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4073997065494427414}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79415fbcab119d14c8ad1dbb96f26e5f, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c0983674857ebd46b4bb79dcc0bfaa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 5376258187808011097, guid: 4f80c505637f74e41ac7fb5aa4c04fc4, type: 3}
-  player: {fileID: 6865790966156633594, guid: 5baa3e0fe179c4c478f9dbe109a33a75, type: 3}
-  tunnel: {fileID: 5019951793429226193, guid: 872ce6f2600928e4583994de8041be31, type: 3}
-  trigger: 0
-  Btrigger: 0
+  player: {fileID: 0}
 --- !u!61 &4073997065494427411
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class EnemyMove : MonoBehaviour
     public GameManager gameManager;
     public PlayerMove player;
     public TunnelControl tunnel;
-    public InteractiveObject InterOb;
+    public InteractiveParent InterOb;
     public TunnelLightControl tunnelL;
 
     public float movePower = 1f;
@@ -67,6 +67,7 @@ public class EnemyMove : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<PlayerMove>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        InterOb = GameObject.Find("Switches").GetComponent<SwitchInteraction>();
         movePower = 1f;
         spos_x = this.gameObject.transform.position;
         StartCoroutine("ChangeMovement");

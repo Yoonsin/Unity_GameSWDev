@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 public class TunnelControl : MonoBehaviour
 {
-    public InteractiveObject InterOb;
+    public InteractiveParent InterOb;
     
     public bool Tun = false;
 
@@ -15,6 +15,7 @@ public class TunnelControl : MonoBehaviour
     {
         Tun = false;
         light = GetComponentInChildren<Light2D>();
+        InterOb = GameObject.Find("Switches").GetComponent<SwitchInteraction>();
         Invoke("TurnOn", 5);
     }
 
