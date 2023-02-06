@@ -67,7 +67,7 @@ public class EnemyMove : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<PlayerMove>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        InterOb = GameObject.Find("Switches").GetComponent<SwitchInteraction>();
+        InterOb = GameObject.Find("Switchs").GetComponent<SwitchInteraction>();
         movePower = 1f;
         spos_x = this.gameObject.transform.position;
         StartCoroutine("ChangeMovement");
@@ -88,7 +88,7 @@ public class EnemyMove : MonoBehaviour
         attackReady = false;
         touchedSword = false;
         isTracing = false;
-        enemyHP = 5;
+        enemyHP = 1;
         bossHP = enemyHP * 2;
         movementFlag = 0;
         traceTarget = null;

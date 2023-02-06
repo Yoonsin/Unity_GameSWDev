@@ -12,7 +12,7 @@ public class InteractiveSwitch : MonoBehaviour
     void Start()
     {
         detect = GetComponent<BoxCollider2D>();
-        switchs = GameObject.Find("Switch").transform.Find("Spike");
+        switchs = GameObject.Find("Switchs").transform.Find("Spike");
     }
 
     
@@ -24,7 +24,7 @@ public class InteractiveSwitch : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            GameObject.Find("Switch").transform.Find("Spike").gameObject.SetActive(true);
+            GameObject.Find("Switchs").transform.Find("Spike").gameObject.SetActive(true);
         }
     }
 

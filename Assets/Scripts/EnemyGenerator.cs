@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyGenerator : MonoBehaviour
 {
     public GameManager gameManager;
     public GameObject enemyPrefab;
+    public GameObject bossPrefab;
+    public PlatformGenerator platGenerator;
+    
 
     bool isnotSpawned = false; // 스폰이 안 됐는가?
 
@@ -28,18 +32,34 @@ public class EnemyGenerator : MonoBehaviour
     // 적 스폰
     void enemySpawn()
     {
-        for (int stage = 0; stage < 3; stage++)
+        for (int stage = 0; stage < platGenerator.platformList.Count; stage++)
         {
-            for (int spawned = 0; spawned < gameManager.enemyNum[stage]; spawned++)
+
+            //스테이지 n의 양쪽 끝 X좌표
+            float stageLeftX = gameManager.stageX[stage];
+            float stageRightX = stageLeftX + PlatformGenerator.platInterval - PlatformGenerator.WallInterval * 2;
+
+
+            if (stage == platGenerator.platformList.Count - 1)
             {
-                //Debug.Log("stage " + stage + " / spawned " + spawned);
-                //Debug.Log("min " + (gameManager.wallX[stage] + 5.0f));
-                //Debug.Log("max " + (gameManager.wallX[stage + 1] - 3.0f));
-                float x = Random.Range(gameManager.wallX[stage] + 5.0f, gameManager.wallX[stage + 1] - 3.0f);
-                //Debug.Log("x: " + x);
-                GameObject enemy = Instantiate(enemyPrefab);
-                enemy.transform.position = new Vector2(x, -0.5f);
-                //enemy.player = GameObject.Find("Player");
+                //보스 스테이지
+
+                float bossX = Random.Range(stageLeftX, stageRightX);
+                GameObject boss = Instantiate(bossPrefab);
+                boss.transform.position = new Vector2(bossX, -0.7f);
+            }
+            else
+            {
+                //나머지 스테이지
+
+                for (int spawned = 0; spawned < gameManager.enemyNum; spawned++)
+                {
+
+                    float enemyX = Random.Range(stageLeftX, stageRightX);
+                    GameObject enemy = Instantiate(enemyPrefab);
+                    enemy.transform.position = new Vector2(enemyX, -0.7f);
+
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ public class PlayerMove : MonoBehaviour
     public TunnelControl tunnel;
     public InteractiveParent InterOb;
     public TunnelLightControl tunnelL;
+    public PlatformGenerator platGenerator;
     public GameObject child;
 
     Rigidbody2D rigid;
@@ -49,6 +50,7 @@ public class PlayerMove : MonoBehaviour
 
     public InteractiveParent interactiveObject = null;  // 상호작용 물체 (각 물체 스크립트에서 알아서 넣었다 뺐다 함)
     public bool isFinalBomb = false;
+    bool finalFlag = false;
 
     void Awake()
     {
@@ -62,7 +64,8 @@ public class PlayerMove : MonoBehaviour
 
     void Start()
     {
-        
+
+        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
         gameObject.layer = 8;   // 플레이어의 레이어를 Player로 함
         damagedBgAlpha = 0;
         damagedBg.color = new Color(1, 1, 1, 0);
@@ -188,17 +191,30 @@ public class PlayerMove : MonoBehaviour
         {
             interactiveObject.Interaction();
         }
+
         // 플레이어 조명(터널에서 스위치 못 올렸을 때만 켜지기)
-        if (tunnel.Tun == true && tunnelL.states == false)
+        if (tunnel.Tun == true)
         {
-            if (GameObject.Find("Switches").GetComponent<SwitchInteraction>().trigger == true)
+            bool lightFlag = false;
+             for(int stage = 0; stage < platGenerator.platformList.Count; stage++)
+            {
+                if (platGenerator.platformList[stage].transform.Find("LightController").GetComponent<TunnelLightControl>().states == true)
+                {
+                    lightFlag = true; 
+                    break;
+                }
+            }
+             if(lightFlag)
             {
                 Debug.Log("PlayerMove 플레이어 조명 켠당");
                 GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
             }
+
+
         }
-        else if(tunnel.Tun == false || tunnelL.states == false)
+        else if(tunnel.Tun == false)
         {
+            //Debug.Log("PlayerMove 플레이어 조명 끈당");
             playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
         }
     }
@@ -251,25 +267,21 @@ public class PlayerMove : MonoBehaviour
                 }
             }
         }
-        
-        // 열린 문 닫기
-        if (rigid.position.x >= gameManager.wallX[gameManager.currentStage] + 2.0f && gameManager.isOpened)
-        {
-            Debug.Log("Player X: " + rigid.position.x);
-            GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
-            gameManager.isOpened = false;
-            gameManager.currentStage++;
-            if(gameManager.currentStage == 5) //스테이지 끝이면
-            {
-                gameManager.endUiObj.SetActive(true);
-                Time.timeScale = 0;
-            }
-            else
-            {
-                gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
-            }
 
+        // 열린 문 닫기
+        if(gameManager.currentStage < gameManager.stageX.Count + 1) //스테이지 X 배열 범위 초과 오류방지  
+        {
+            if (gameManager.currentStage >= 2 && rigid.position.x >= gameManager.stageX[gameManager.currentStage - 1] && gameManager.isOpened)
+            {
+
+                Debug.Log("Player X: " + rigid.position.x);
+                gameManager.wallX[gameManager.currentStage - 1].SetActive(true);
+                gameManager.isOpened = false;
+
+
+            }
         }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -287,25 +299,46 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) //다음 스테이지로 넘어감
     {
-        //Debug.Log("collision: " + collision.gameObject.tag);
+        
         if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
-        {
-            if((gameManager.currentStage == 4 && isFinalBomb == true) || gameManager.currentStage != 4) //보스 스테이지에서는 폭탄을 해체해야 다음 스테이지로 넘어갈 수 있음
+        { 
+            GameObject coll = collision.gameObject;
+            child.transform.position = new Vector3(coll.transform.position.x, child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
+            childCnt++;
+
+            if(gameManager.currentStage == gameManager.stageX.Count)
             {
-                GameObject coll = collision.gameObject;
-                coll.transform.position = new Vector3(gameManager.stageX[childCnt + 1], coll.transform.position.y, coll.transform.position.z); //스테이지 블록은 다음 스테이지로 옮기기
-                child.transform.position = new Vector3(gameManager.stageX[childCnt], child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
-                childCnt++;
+                //만약 마지막 스테이지면
+                //비활성화 하지 않고 오른쪽 끝으로 스테이지 블록 옮겨주기
+                if (!finalFlag)
+                {
+                    textManager.setFlag(true); //대화창 활성화;
+                    textManager.showText(); //되자마자 대화창 다시 띄우기
+                    Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
+
+                    coll.transform.position = new Vector3(coll.transform.position.x + PlatformGenerator.platInterval*0.9f, coll.transform.position.y, coll.transform.position.z);
+                    finalFlag = true;
+
+                }
+                else if(finalFlag && isFinalBomb)
+                {
+
+                    textManager.setFlag(true); //대화창 활성화;
+                    textManager.showText(); //되자마자 대화창 다시 띄우기
+                    Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
+
+                    coll.SetActive(false);
+                }
+               
+            }
+            else
+            {
                 textManager.setFlag(true); //대화창 활성화;
                 textManager.showText(); //되자마자 대화창 다시 띄우기
                 Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
 
-                if (gameManager.currentStage == 4 && isFinalBomb == true) //스테이지가 다 끝났다면
-                {
-                    coll.SetActive(false); //스테이지 블록 비활성화
-                }
-
-
+                //나머지 스테이지는 스테이지 내의 블록 비활성화만.
+                coll.SetActive(false);
             }
         }
     }

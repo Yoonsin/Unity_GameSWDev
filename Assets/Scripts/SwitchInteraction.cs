@@ -15,13 +15,14 @@ public class SwitchInteraction : InteractiveParent
     {
         if (trigger == true)
         {
-            GameObject.Find("Switches").transform.Find("switch_0").gameObject.SetActive(false);
-            GameObject.Find("Switches").transform.Find("switch_1").gameObject.SetActive(true);
+            transform.Find("switch_0").gameObject.SetActive(false);
+            transform.Find("switch_1").gameObject.SetActive(true);
+           
         }
         else if (trigger == false)
         {
-            GameObject.Find("Switches").transform.Find("switch_0").gameObject.SetActive(true);
-            GameObject.Find("Switches").transform.Find("switch_1").gameObject.SetActive(false);
+            transform.Find("switch_0").gameObject.SetActive(true);
+            transform.Find("switch_1").gameObject.SetActive(false);
         }
     }
 
@@ -32,6 +33,7 @@ public class SwitchInteraction : InteractiveParent
         {
             player.interactiveObject = this;
             transform.Find("InteractiveMark").gameObject.SetActive(true);
+            
         }
     }
 

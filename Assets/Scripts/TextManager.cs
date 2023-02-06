@@ -71,8 +71,7 @@ public class TextManager : MonoBehaviour
     {
         textSplit = textdata.getText(id, textCnt).Split(':'); //데이터를 대사와 표정+퀘스트 아이디로 분리
 
-        //Debug.Log(textSplit[1]);
-        //Debug.Log(textSplit[1].Split('$')[1]);
+        
         questCnt = int.Parse(textSplit[1].Split('$')[1]); // 퀘스트 아이디 추출
         if (questCnt != oldQuestCnt) //만약 다른 퀘스트면
         {
@@ -98,7 +97,7 @@ public class TextManager : MonoBehaviour
             portraitImg.color = new Color(1, 1, 1, 1); //표정 이미지 갱신
             StartCoroutine(NormalText(textSplit[0])); //텍스트 애니 재생 + 대사 갱신
             textfield.SetActive(textFlag); //텍스트 창 활성화
-           //Debug.Log(textCnt);
+
             textCnt++; //다음 대사로 옮기기 
         }
     }
