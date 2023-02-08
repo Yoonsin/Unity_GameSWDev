@@ -56,31 +56,29 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\BombInteraction.cs" />
-    <Compile Include="Assets\Scripts\Camera\CameraMove.cs" />
-    <Compile Include="Assets\Scripts\EnemyGenerator.cs" />
-    <Compile Include="Assets\Scripts\PlatformGenerator.cs" />
-    <Compile Include="Assets\Scripts\TunnelControl.cs" />
-    <Compile Include="Assets\Scripts\SwitchInteraction.cs" />
-    <Compile Include="Assets\Scripts\InteractiveObject.cs" />
-    <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
-    <Compile Include="Assets\Scripts\PlayerAttack.cs" />
-    <Compile Include="Assets\Simple 2D Platformer BE2\ReadMe\Scripts\ReadmeBE2.cs" />
-    <Compile Include="Assets\Scripts\Camera\BackGround\RepeatBG_Re.cs" />
-    <Compile Include="Assets\Scripts\TextManager.cs" />
-    <Compile Include="Assets\Scripts\PlayerMove.cs" />
-    <Compile Include="Assets\Scripts\EnemyMove.cs" />
-    <Compile Include="Assets\Scripts\InteractiveParent.cs" />
-    <Compile Include="Assets\CubeScript.cs" />
-    <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Camera\BackGround\RedesignedRepeatBG.cs" />
-    <Compile Include="Assets\Scripts\TextData.cs" />
-    <Compile Include="Assets\Scripts\Camera\CameraShake.cs" />
-    <Compile Include="Assets\Scripts\TunnelLightControl.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\BombInteraction.cs" />
+    <Compile Include="Assets\01.Scripts\02.Camera\CameraMove.cs" />
+    <Compile Include="Assets\01.Scripts\01.Unit\EnemyGenerator.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\PlatformGenerator.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\TunnelControl.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\SwitchInteraction.cs" />
+    <Compile Include="Assets\01.Scripts\00.Old Script\InteractiveObject.cs" />
+    <Compile Include="Assets\01.Scripts\00.Old Script\InteractiveSwitch.cs" />
+    <Compile Include="Assets\01.Scripts\01.Unit\PlayerAttack.cs" />
+    <Compile Include="Assets\01.Scripts\02.Camera\BackGround\RepeatBG_Re.cs" />
+    <Compile Include="Assets\01.Scripts\04.Manager\TextManager.cs" />
+    <Compile Include="Assets\01.Scripts\01.Unit\PlayerMove.cs" />
+    <Compile Include="Assets\01.Scripts\01.Unit\EnemyMove.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\InteractiveParent.cs" />
+    <Compile Include="Assets\01.Scripts\04.Manager\GameManager.cs" />
+    <Compile Include="Assets\01.Scripts\02.Camera\BackGround\RedesignedRepeatBG.cs" />
+    <Compile Include="Assets\01.Scripts\04.Manager\TextData.cs" />
+    <Compile Include="Assets\01.Scripts\02.Camera\CameraShake.cs" />
+    <Compile Include="Assets\01.Scripts\03.Interaction Object\TunnelLightControl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Fonts\OFL.txt" />
-    <None Include="Assets\Images\NewSurfaceShader.shader" />
+    <None Include="Assets\04.Fonts\OFL.txt" />
+    <None Include="Assets\02.Images\NewSurfaceShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
