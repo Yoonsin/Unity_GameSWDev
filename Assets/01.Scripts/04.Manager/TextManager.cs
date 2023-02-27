@@ -26,7 +26,11 @@ public class TextManager : MonoBehaviour
 
     int questCnt = 0; //퀘스트 id
     int oldQuestCnt = 0; //퀘스트 
+
     int id = 10; //호랑이 id
+    int childId = 20; //꼬마 id
+    int bossId = 30; //보스 id
+
     int length = 0; //호랑이 대사 길이
 
 
@@ -43,7 +47,7 @@ public class TextManager : MonoBehaviour
         textFlag = true;
         textAniFlag = false;
         textdata = TextData.GetComponent<TextData>();
-        length = textdata.getLength(id);
+        length = textdata.getLength();
         //Time.timeScale = 0;
 
     }
@@ -69,10 +73,10 @@ public class TextManager : MonoBehaviour
 
     public void showText()
     {
-        textSplit = textdata.getText(id, textCnt).Split(':'); //데이터를 대사와 표정+퀘스트 아이디로 분리
+        textSplit = textdata.getText(textCnt).Split(':'); //데이터를 대사와 표정+퀘스트 아이디로 분리
 
         
-        questCnt = int.Parse(textSplit[1].Split('$')[1]); // 퀘스트 아이디 추출
+        questCnt = int.Parse((textSplit[1].Split('$')[1]).Split('#')[0]); // 퀘스트 아이디 추출
         if (questCnt != oldQuestCnt) //만약 다른 퀘스트면
         {
 
@@ -93,7 +97,7 @@ public class TextManager : MonoBehaviour
             else
                 bgImg.color = new Color(0, 0, 0, 0);
             
-            portraitImg.sprite = textdata.getPortrait(id, int.Parse((textSplit[1].Split('$'))[0]));
+            portraitImg.sprite = textdata.getPortrait(int.Parse((textSplit[1].Split('#'))[1]), int.Parse((textSplit[1].Split('$'))[0]));
             portraitImg.color = new Color(1, 1, 1, 1); //표정 이미지 갱신
             StartCoroutine(NormalText(textSplit[0])); //텍스트 애니 재생 + 대사 갱신
             textfield.SetActive(textFlag); //텍스트 창 활성화
