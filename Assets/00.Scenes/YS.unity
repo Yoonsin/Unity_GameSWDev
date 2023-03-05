@@ -1592,6 +1592,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[11]
+      value: 
+      objectReference: {fileID: -624830828, guid: b965a14fd9285d24c9ddd3ded77c60a2, type: 3}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[12]
+      value: 
+      objectReference: {fileID: -1726922153, guid: b965a14fd9285d24c9ddd3ded77c60a2, type: 3}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[13]
+      value: 
+      objectReference: {fileID: -2011001583, guid: b965a14fd9285d24c9ddd3ded77c60a2, type: 3}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[14]
+      value: 
+      objectReference: {fileID: -1296992531, guid: b965a14fd9285d24c9ddd3ded77c60a2, type: 3}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[15]
+      value: 
+      objectReference: {fileID: -1622712834, guid: 25ede62c3d7def444976238bfd2c2084, type: 3}
+    - target: {fileID: 5339034605117170438, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
+      propertyPath: portraitArr.Array.data[16]
+      value: 
+      objectReference: {fileID: -567208256, guid: 25ede62c3d7def444976238bfd2c2084, type: 3}
     - target: {fileID: 5339034605117170439, guid: 33adbe9ea6951234f8e467bfabe74828, type: 3}
       propertyPath: m_Name
       value: TextData
