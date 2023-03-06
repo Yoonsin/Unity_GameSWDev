@@ -15,6 +15,10 @@ public class TunnelControl : MonoBehaviour
     {
         Tun = false;
         light = GetComponentInChildren<Light2D>();
+<<<<<<< Updated upstream:Assets/Scripts/TunnelControl.cs
+=======
+        //InterOb = GameObject.Find("Switchs").GetComponent<SwitchInteraction>();
+>>>>>>> Stashed changes:Assets/01.Scripts/03.Interaction Object/TunnelControl.cs
         Invoke("TurnOn", 5);
     }
 
@@ -36,7 +40,11 @@ public class TunnelControl : MonoBehaviour
     {
         Debug.Log("≈Õ≥Œ ≈¿Â");
         Tun = false;
+<<<<<<< Updated upstream:Assets/Scripts/TunnelControl.cs
         InterOb.trigger = false;
+=======
+        //InterOb.trigger = false; //¿⁄µø¿∏∑Œ Ω∫¿ßƒ° ≤®¡¸
+>>>>>>> Stashed changes:Assets/01.Scripts/03.Interaction Object/TunnelControl.cs
         light.color = Color.white;
         Invoke("TurnOn", 5);
         

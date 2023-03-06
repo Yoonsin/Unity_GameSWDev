@@ -40,12 +40,15 @@ public class PlayerMove : MonoBehaviour
     public float attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
     public bool isAttacking = false;
     public bool isInterrupting = false; // 반격을 시도했는지 확인
-    public int childCnt = 0; //아이 위치 옮겨준 횟수
 
     public InteractiveObject interactiveObject = null;  // 상호작용 물체
 
+    public int childCnt = 0; //아이 위치 옮겨준 횟수
+
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         rigid = GetComponent<Rigidbody2D>();
         //capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -56,22 +59,37 @@ public class PlayerMove : MonoBehaviour
 
     void Start()
     {
+<<<<<<< Updated upstream:Assets/Scripts/PlayerMove.cs
         
+=======
+
+        //tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
+>>>>>>> Stashed changes:Assets/01.Scripts/01.Unit/PlayerMove.cs
         gameObject.layer = 8;   // 플레이어의 레이어를 Player로 함
         damagedBgAlpha = 0;
         damagedBg.color = new Color(1, 1, 1, 0);
 
+        speed = 7.0f;   // 이동 속도
+        dashPower = 5.0f;
+        isDashing = false;
+        canDash = true;
+        coolTime_Dash = 1.5f;
+
         jumpCnt = 1;
-        speed = 7.0f;
+
         isDamaged = false;
         damagedTimer = 1;
 
+        damagedBgAlpha = 0;
         isShaked = false; // 피격시 카메라 흔들림 여부 => cameraMove 스크립트에서 사용
 
         attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
         isAttacking = false;
         isInterrupting = false; // 반격을 시도했는지 확인
+
         interactiveObject = null;
+        isFinalBomb = false;
+        finalFlag = false;
     
         childCnt = 0;  //아이 위치 옮겨준 횟수
     }
@@ -80,6 +98,7 @@ public class PlayerMove : MonoBehaviour
     // 매 프레임 호출. 주로 단발적 이벤트.
     private void Update()
     {
+        Debug.Log("플레이어가 말하는 sceneNum: " + gameManager.sceneNum);
         // 피격 상태 지속 시간
         if (isDamaged)
         {
@@ -184,6 +203,9 @@ public class PlayerMove : MonoBehaviour
     {
         // 이동 left, a: -1 / right, d: 1 / 안 움직이거나 양쪽 다 누를 때: 0
         float key = Input.GetAxisRaw("Horizontal");
+        Debug.Log("key: " + key);
+        Debug.Log("gameObject.layer: " + gameObject.layer);
+        Debug.Log("isDashing: " + isDashing);
         // x축 이동은 x * speed로, y축 이동은 기존의 속력 값(현재는 중력)
         if (gameObject.layer != 9)  // 피격시 반동을 위해서 제어할 수 없게 함
             rigid.velocity = new Vector2(key * speed, rigid.velocity.y);
