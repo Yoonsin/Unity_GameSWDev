@@ -6,16 +6,14 @@ using UnityEngine.SceneManagement;
 using static UnityEditor.VersionControl.Asset;
 using System;
 using System.Threading;
-using Unity.VisualScripting;
 
 public class PlayerMove : MonoBehaviour
 {
     public GameManager gameManager;
     public TextManager textManager;
     public TunnelControl tunnel;
-    public InteractiveParent InterOb;
+    public InteractiveObject InterOb;
     public TunnelLightControl tunnelL;
-    public PlatformGenerator platGenerator;
     public GameObject child;
 
     Rigidbody2D rigid;
@@ -24,10 +22,6 @@ public class PlayerMove : MonoBehaviour
     public Animator anim;
 
     private float speed = 7.0f;     // 이동 속도
-    public float dashPower = 5.0f;
-    private bool isDashing = false;
-    private bool canDash = true;
-    private float coolTime_Dash = 1.5f;
     public float jumpPower;         // 점프력
     private int jumpCnt = 1;        // 점프 횟수
 
@@ -46,14 +40,15 @@ public class PlayerMove : MonoBehaviour
     public float attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
     public bool isAttacking = false;
     public bool isInterrupting = false; // 반격을 시도했는지 확인
-    public int childCnt = 0; //아이 위치 옮겨준 횟수
 
-    public InteractiveParent interactiveObject = null;  // 상호작용 물체 (각 물체 스크립트에서 알아서 넣었다 뺐다 함)
-    public bool isFinalBomb = false;
-    bool finalFlag = false;
+    public InteractiveObject interactiveObject = null;  // 상호작용 물체
+
+    public int childCnt = 0; //아이 위치 옮겨준 횟수
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         rigid = GetComponent<Rigidbody2D>();
         //capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -64,23 +59,37 @@ public class PlayerMove : MonoBehaviour
 
     void Start()
     {
+<<<<<<< Updated upstream:Assets/Scripts/PlayerMove.cs
+        
+=======
 
-        tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
+        //tunnel = GameObject.Find("Tunnel").GetComponent<TunnelControl>();
+>>>>>>> Stashed changes:Assets/01.Scripts/01.Unit/PlayerMove.cs
         gameObject.layer = 8;   // 플레이어의 레이어를 Player로 함
         damagedBgAlpha = 0;
         damagedBg.color = new Color(1, 1, 1, 0);
 
+        speed = 7.0f;   // 이동 속도
+        dashPower = 5.0f;
+        isDashing = false;
+        canDash = true;
+        coolTime_Dash = 1.5f;
+
         jumpCnt = 1;
-        speed = 7.0f;
+
         isDamaged = false;
         damagedTimer = 1;
 
+        damagedBgAlpha = 0;
         isShaked = false; // 피격시 카메라 흔들림 여부 => cameraMove 스크립트에서 사용
 
         attackTimer = -1;      // 공격 타이머 (공격 횟수 초기화에 사용)
         isAttacking = false;
         isInterrupting = false; // 반격을 시도했는지 확인
+
         interactiveObject = null;
+        isFinalBomb = false;
+        finalFlag = false;
     
         childCnt = 0;  //아이 위치 옮겨준 횟수
     }
@@ -89,6 +98,7 @@ public class PlayerMove : MonoBehaviour
     // 매 프레임 호출. 주로 단발적 이벤트.
     private void Update()
     {
+        Debug.Log("플레이어가 말하는 sceneNum: " + gameManager.sceneNum);
         // 피격 상태 지속 시간
         if (isDamaged)
         {
@@ -102,6 +112,18 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
+        // 공격 딜레이 및 공격 횟수 초기화 *
+        if (attackTimer >= 0)
+        {
+            //Debug.Log("attackTimer " + attackTimer);
+            attackTimer -= Time.deltaTime;
+        } else if (attackTimer > -1)    // 타이머 끝났고 초기값보다 클 때
+        {
+
+            Debug.Log("playerAttack reset");
+            gameManager.playerAttack = 4;
+            attackTimer = -1;
+        }
 
         // 점프
         if ((Input.GetButtonDown("Jump") || Input.GetKeyDown("w") || Input.GetKeyDown("up")) && jumpCnt > 0)
@@ -114,17 +136,17 @@ public class PlayerMove : MonoBehaviour
         if ((Input.GetButtonUp("Jump") || Input.GetKeyUp("w") || Input.GetKeyUp("up")) && anim.GetBool("isJumping"))
             anim.SetBool("isJumping", false);
 
-        // 방향 전환. 대쉬 중에는 방향전환 불가
-        if (Input.GetAxisRaw("Horizontal") < 0 && isDashing == false) 
+        // 방향 전환
+        if (Input.GetAxisRaw("Horizontal") < 0)
         {
             transform.localScale = new Vector3(3, 3, 3);   // Left flip
-        } else if (Input.GetAxisRaw("Horizontal") > 0 && isDashing == false)
+        } else if (Input.GetAxisRaw("Horizontal") > 0)
         {
-            transform.localScale = new Vector3(-3, 3, 3);   // Right flip
+            transform.localScale = new Vector3(-3, 3, 3);   // Left flip
         }
         
         // 걷기 애니메이션
-        if (rigid.velocity.normalized.x == 0 ||isDashing == true)
+        if (rigid.velocity.normalized.x == 0)
             anim.SetBool("isWalking", false);
         else
         {
@@ -132,27 +154,10 @@ public class PlayerMove : MonoBehaviour
             
         }
 
-
-        
-        // 공격 딜레이 및 공격 횟수 초기화 *
-        if (attackTimer >= 0)
-        {
-            //Debug.Log("attackTimer " + attackTimer);
-            attackTimer -= Time.deltaTime;
-        }
-        else if (attackTimer > -1)    // 타이머 끝났고 초기값보다 클 때
-        {
-
-            Debug.Log("playerAttack reset");
-            gameManager.playerAttack = 4;
-            attackTimer = -1;
-        }
-
         // 공격 *
         if (Input.GetKeyDown(KeyCode.LeftControl) && gameManager.playerAttack > 0 && anim.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             isAttacking = true;
-            Debug.Log(gameManager.playerAttack);
             anim.SetTrigger("" + (5 - gameManager.playerAttack));
             //Debug.Log("Attack " + (5 - gameManager.playerAttack));
         }
@@ -165,26 +170,6 @@ public class PlayerMove : MonoBehaviour
         {
             isInterrupting = false;
         }
-        // 대쉬
-        if (Input.GetKeyDown(KeyCode.C) && !(anim.GetCurrentAnimatorStateInfo(0).IsName("counter")) && canDash == true )
-        {
-            //대쉬 중에는 무적. 키 입력 불가.( 대쉬 애니 이벤트에 넣기)
-            canDash = false;
-            isDashing = true;
-            Invoke("coolTimeDash", coolTime_Dash); //쿨타임 
-            anim.SetTrigger("onDash"); //대쉬 애니 재생
-            rigid.velocity = new Vector2(0, rigid.velocity.y); //걸을 때 대쉬하면 가속 붙음. 그거 방지
-            // 방향 전환
-            if (transform.localScale.x == 3) //왼쪽
-            {
-                rigid.AddForce(Vector2.left * dashPower, ForceMode2D.Impulse);  
-            }
-            else if (transform.localScale.x == -3) //오른쪽
-            {
-                rigid.AddForce(Vector2.right * dashPower, ForceMode2D.Impulse);
-            }
-
-        }
 
         // 상호작용
         if (Input.GetKeyDown(KeyCode.LeftAlt) && interactiveObject)
@@ -193,41 +178,14 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 플레이어 조명(터널에서 스위치 못 올렸을 때만 켜지기)
-        if (tunnel.Tun == true)
+        if (tunnel.Tun == true && tunnelL.states == false && InterOb.trigger == true)
         {
-            bool lightFlag = false;
-             for(int stage = 0; stage < platGenerator.platformList.Count; stage++)
-            {
-                if (platGenerator.platformList[stage].transform.Find("LightController").GetComponent<TunnelLightControl>().states == true)
-                {
-                    lightFlag = true; 
-                    break;
-                }
-            }
-             if(lightFlag)
-            {
-                Debug.Log("PlayerMove 플레이어 조명 켠당");
-                GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
-            }
-
-
+            GameObject.Find("Player").transform.Find("Player_light").gameObject.SetActive(true);// 조명 오브젝트 활성화
         }
-        else if(tunnel.Tun == false)
+        else if(tunnel.Tun == false || tunnelL.states == false)
         {
-            //Debug.Log("PlayerMove 플레이어 조명 끈당");
             playerLight.gameObject.SetActive(false);// 조명 오브젝트 비활성화
         }
-    }
-
-    void coolTimeDash()
-    {
-        canDash = true;
-    }
-
-    public void FinishDashAnim()
-    {
-        isDashing = false; //대쉬 끝
-        rigid.velocity = new Vector2(0, rigid.velocity.y); //대쉬 후 반동 없도록 만들기
     }
 
     public void FinishAttackAnim()
@@ -245,11 +203,12 @@ public class PlayerMove : MonoBehaviour
     {
         // 이동 left, a: -1 / right, d: 1 / 안 움직이거나 양쪽 다 누를 때: 0
         float key = Input.GetAxisRaw("Horizontal");
+        Debug.Log("key: " + key);
+        Debug.Log("gameObject.layer: " + gameObject.layer);
+        Debug.Log("isDashing: " + isDashing);
         // x축 이동은 x * speed로, y축 이동은 기존의 속력 값(현재는 중력)
-        if (gameObject.layer != 9 && isDashing == false)  // 피격시 반동 or 대쉬 중일 때는 아래 구문 제어를 받지 못하게 해야함.
+        if (gameObject.layer != 9)  // 피격시 반동을 위해서 제어할 수 없게 함
             rigid.velocity = new Vector2(key * speed, rigid.velocity.y);
-        
-        
         
         // Landing Platform, 레이 캐스트
         if (rigid.velocity.y < 0)
@@ -261,27 +220,25 @@ public class PlayerMove : MonoBehaviour
             {
                 if (rayHit.distance < 0.1f)
                 {
-                    //Debug.Log("착지");
+                    Debug.Log("착지");
                     jumpCnt = 1;
                     anim.SetBool("isJumping", false);
                 }
             }
         }
-
-        // 열린 문 닫기
-        if(gameManager.currentStage < gameManager.stageX.Count + 1) //스테이지 X 배열 범위 초과 오류방지  
-        {
-            if (gameManager.currentStage >= 2 && rigid.position.x >= gameManager.stageX[gameManager.currentStage - 1] && gameManager.isOpened)
-            {
-
-                Debug.Log("Player X: " + rigid.position.x);
-                gameManager.wallX[gameManager.currentStage - 1].SetActive(true);
-                gameManager.isOpened = false;
-
-
-            }
-        }
         
+        // 열린 문 닫기
+        if (rigid.position.x >= gameManager.wallX[gameManager.currentStage] + 2.0f && gameManager.isOpened)
+        {
+            Debug.Log("Player X: " + rigid.position.x);
+            GameObject.Find("Wall").transform.GetChild(gameManager.currentStage).gameObject.SetActive(true);
+            gameManager.isOpened = false;
+            gameManager.currentStage++;
+
+            if (gameManager.currentStage != 4) //마지막 스테이지는 보스 스테이지 이므로 제외 (if문 안써주면 배열 인덱스 오류남)
+                gameManager.currentStageEnemy = gameManager.enemyNum[gameManager.currentStage - 1];
+
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -299,51 +256,20 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) //다음 스테이지로 넘어감
     {
-        
+        //Debug.Log("collision: " + collision.gameObject.tag);
         if (!textManager.getFlag() && (collision.gameObject.tag == "Stage") ) //대화창 비활성화 상태고 태그가 스테이지라면
-        { 
-            GameObject coll = collision.gameObject;
-            child.transform.position = new Vector3(coll.transform.position.x, child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
+        {
+            collision.gameObject.SetActive(false); //부딫힌 물체는 비활성화 
+            child.transform.position = new Vector3(gameManager.childX[childCnt], child.transform.position.y, child.transform.position.z); //아이 위치도 스테이지에 맞게 옮겨주기
             childCnt++;
+            textManager.setFlag(true); //대화창 활성화;
+            textManager.showText(); //되자마자 대화창 다시 띄우기
+            Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
 
-            if(gameManager.currentStage == gameManager.stageX.Count)
-            {
-                //만약 마지막 스테이지면
-                //비활성화 하지 않고 오른쪽 끝으로 스테이지 블록 옮겨주기
-                if (!finalFlag)
-                {
-                    textManager.setFlag(true); //대화창 활성화;
-                    textManager.showText(); //되자마자 대화창 다시 띄우기
-                    Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
+           
 
-                    coll.transform.position = new Vector3(coll.transform.position.x + PlatformGenerator.platInterval*0.9f, coll.transform.position.y, coll.transform.position.z);
-                    finalFlag = true;
-
-                }
-                else if(finalFlag && isFinalBomb)
-                {
-
-                    textManager.setFlag(true); //대화창 활성화;
-                    textManager.showText(); //되자마자 대화창 다시 띄우기
-                    Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
-
-                    coll.SetActive(false);
-                }
-               
-            }
-            else
-            {
-                textManager.setFlag(true); //대화창 활성화;
-                textManager.showText(); //되자마자 대화창 다시 띄우기
-                Time.timeScale = 0; //대화창 되면 시간 멈추게 하기
-
-                //나머지 스테이지는 스테이지 내의 블록 비활성화만.
-                coll.SetActive(false);
-            }
         }
     }
-
-    public GameObject mainCamera; //카메라 오브젝트 불러오기
 
     public void OnDamaged(Vector2 targetPos)
     {
@@ -358,8 +284,7 @@ public class PlayerMove : MonoBehaviour
 
         // 배경 이펙트
         if (gameObject.activeInHierarchy)
-            mainCamera.GetComponent<CameraShake>().ShakeCamera(); //카메라 진동 코루틴 카메라 내부 스크립트로 이동, 카메라 오브젝트에 접근하여 함수 실행
-            //StartCoroutine(Shake(0.2f, 0.15f));
+            StartCoroutine(Shake(0.2f, 0.15f));
         damagedBgAlpha = 0.2f * (5 - gameManager.playerHP);
         damagedBg.color = new Color(1, 1, 1, damagedBgAlpha);
             StartCoroutine("reduceDamagedBg");
@@ -407,5 +332,19 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    
+    private IEnumerator Shake(float amount, float duration)
+    {
+        cameraOriginPos = Camera.transform.localPosition;
+        float timer = 0;
+        while (timer <= duration)
+        {
+            isShaked = true; //true면 cameraMove 에서 카메라가 플레이어 따라가는 코드 중지시키기. (cameraMove의 카메라 위치 변경 코드가 여기 코드를 덮고있어서 흔들림이 적용안돼기 때문)
+            Camera.transform.localPosition = (Vector3)UnityEngine.Random.insideUnitCircle * amount + cameraOriginPos;
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        isShaked = false;
+        Camera.transform.localPosition = cameraOriginPos;
+    }
 }

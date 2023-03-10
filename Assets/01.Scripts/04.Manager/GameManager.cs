@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     public TextManager textManager;
 
+    public int sceneNum = 0;    // 0: InitializingScene, 1: OfficeScene, 2: YS
+
     public int playerHP = 4;
     public int playerAttack = 4;
     private float startUiAlpha = 0.7f;
@@ -21,6 +23,8 @@ public class GameManager : MonoBehaviour
     public GameObject endUiObj;
     private Image startUi;
     private Image endUi;
+
+    public bool isPlatformMade = false;
 
     public List<GameObject> wallX;
     //public float[] wallX;// 스테이지별 벽 X좌표 맨 앞과 마지막 벽도 포함
@@ -33,45 +37,59 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         startUi = startUiObj.GetComponent<Image>(); //startUi 이미지 받아오기
         endUi = endUiObj.GetComponent<Image>(); //endUi 이미지 받아오기
         endUi.color = new Color(0, 0, 0, startUiAlpha); //endUI는 미리 이미지 설정
-        endUiObj.SetActive(false); //게임 시작할 때는 endUi 비활성화
-
-        for (int stage = 0; stage < platGenerator.platformList.Count; stage++)
-        {
-            stageX.Add(platGenerator.platformList[stage].transform.position.x - PlatformGenerator.platInterval / 2 + PlatformGenerator.WallInterval);
-            wallX.Add(platGenerator.platformList[stage].transform.Find("Wall").gameObject);
-            if(stage == platGenerator.platformList.Count - 1)
-            {
-                //마지막 스테이지에는 벽하나 더 있어서 그것도 붙이기
-                wallX.Add(platGenerator.platformList[stage].transform.Find("Wall(Clone)").gameObject);
-            }
-        }
     }
 
     private void Start()
     {
+        sceneNum = 0;
         playerHP = 4;
         playerAttack = 4;
         startUiAlpha = 0.7f;
         startUi.color = new Color(0, 0, 0, startUiAlpha);
-        Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤
+        //Time.timeScale = 0; //버튼 누르기 전까진 시간 멈춤
+        Time.timeScale = 1; //버튼 누르기 전까진 시간 멈춤
         currentStage = 1;
         currentStageEnemy = enemyNum;
         isOpened = false;
-   
-        
-       
+
+        if (sceneNum == 1)
+            GameObject.Find("Canvas").transform.Find("EndUi").gameObject.SetActive(false); //게임 시작할 때는 endUi 비활성화
+
+        isPlatformMade = false;
     }
 
     private void Update()
     {
-        //마지막 스테이지면 끝내기 
-        if(currentStage == platGenerator.platformList.Count + 1)
+        Debug.Log("sceneNum: " + this.sceneNum);
+        Debug.LogFormat("isPlatformMade: {0}", isPlatformMade);
+        if (this.sceneNum == 1 && !isPlatformMade)
         {
-            
-            endUiObj.SetActive(true);
+            Time.timeScale = 0;
+            Debug.Log("플랫폼 만들게~");
+            for (int stage = 0; stage < platGenerator.platformList.Count; stage++)
+            {
+                stageX.Add(platGenerator.platformList[stage].transform.position.x - PlatformGenerator.platInterval / 2 + PlatformGenerator.WallInterval);
+                wallX.Add(platGenerator.platformList[stage].transform.Find("Wall").gameObject);
+                if (stage == platGenerator.platformList.Count - 1)
+                {
+                    //마지막 스테이지에는 벽하나 더 있어서 그것도 붙이기
+                    wallX.Add(platGenerator.platformList[stage].transform.Find("Wall(Clone)").gameObject);
+                }
+            }
+            isPlatformMade = true;
+        }
+
+        Debug.Log("currentStage: " + currentStage);
+        Debug.Log("platGenerator.platformList.Count: " + platGenerator.platformList.Count);
+        //마지막 스테이지면 끝내기 
+        if (isPlatformMade && currentStage == platGenerator.platformList.Count + 1)
+        {
+            GameObject.Find("Canvas").transform.Find("EndUi").gameObject.SetActive(true);
             Time.timeScale = 0;
         }
 
@@ -89,8 +107,8 @@ public class GameManager : MonoBehaviour
 
     public void startButtonDown()
     {
-
-        startUiObj.SetActive(false); //스타트 ui 전부 비활성화 시키기
+        Debug.Log("시작 버튼 누름");
+        GameObject.Find("Canvas").transform.Find("StartUi").gameObject.SetActive(false);    //스타트 ui 전부 비활성화 시키기
         TextManager.onTM = true; //텍스트 매니저 스타트
     }
 

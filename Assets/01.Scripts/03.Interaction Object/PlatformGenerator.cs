@@ -26,7 +26,7 @@ public class PlatformGenerator : MonoBehaviour
     
 
     // Start is called before the first frame update
-    void Awake()
+    private void Start()
     {
         //플레이어 위치 파악.
         Vector2 playerPos = GameObject.Find("Player").transform.position;
@@ -52,15 +52,6 @@ public class PlatformGenerator : MonoBehaviour
         finalWall.transform.parent = platformList[platformNum - 1].transform;
         finalWall.transform.localScale = new Vector3(1, 1, 1);
         finalWall.transform.localPosition = new Vector2(5.5f, 0);
-
-        
-
-
-    }
-
-    private void Start()
-    {
-        
     }
 
     // Update is called once per frame

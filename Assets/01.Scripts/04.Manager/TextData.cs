@@ -17,8 +17,6 @@ public class TextData : MonoBehaviour
         
         portraitDic = new Dictionary<int, Sprite>();
         generateData(); //대화창 데이터 생성
-
-
     }
 
     void generateData()

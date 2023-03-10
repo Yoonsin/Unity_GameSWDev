@@ -22,7 +22,8 @@ public class EnemyGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isnotSpawned)
+        Debug.Log("°×¸Þ ÀÖ³Ä? " + gameManager);
+        if (gameManager.sceneNum == 1 && gameManager.isPlatformMade && isnotSpawned)
         {
             isnotSpawned = false;
             enemySpawn();
