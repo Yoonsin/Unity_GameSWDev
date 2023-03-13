@@ -61,20 +61,12 @@
     <Compile Include="Assets\01.Scripts\03.Interaction Object\PlatformGenerator.cs" />
     <Compile Include="Assets\Scripts\TunnelControl.cs" />
     <Compile Include="Assets\01.Scripts\04.Manager\TextData.cs" />
-<<<<<<< Updated upstream
-=======
-    <Compile Include="Assets\01.Scripts\02.Camera\CameraMove.cs" />
->>>>>>> Stashed changes
     <Compile Include="Assets\01.Scripts\04.Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\InteractiveObject.cs" />
     <Compile Include="Assets\Scripts\InteractiveSwitch.cs" />
     <Compile Include="Assets\Scripts\PlayerAttack.cs" />
     <Compile Include="Assets\Simple 2D Platformer BE2\ReadMe\Scripts\ReadmeBE2.cs" />
-<<<<<<< Updated upstream
     <Compile Include="Assets\01.Scripts\02.Camera\CameraMove.cs" />
-=======
-    <Compile Include="Assets\01.Scripts\01.Unit\EnemyGenerator.cs" />
->>>>>>> Stashed changes
     <Compile Include="Assets\Scripts\RepeatBG_Re.cs" />
     <Compile Include="Assets\Scripts\DoorInteractive.cs" />
     <Compile Include="Assets\Scripts\TextManager.cs" />
