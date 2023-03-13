@@ -141,7 +141,7 @@ public class EnemyMove : MonoBehaviour
             gameObject.transform.Find("EnemyAI").gameObject.SetActive(true);// 스캔 콜라이더 활성화
             AttackScan = true;
         }
-        else if (tunnel.Tun == true && InterOb.trigger == true)
+        else if (tunnel.Tun == true && tunnelL.states == false)
         {
             scan.gameObject.SetActive(false);// 스캔 콜라이더 비활성화
             AttackScan = false;
@@ -300,7 +300,7 @@ public class EnemyMove : MonoBehaviour
         timer += Time.deltaTime;
         if (timer > waitingTime && AttackScan == true) // 일반공격
         {
-            if (rayHit.collider != null && rayHit.collider.tag == "Player")
+            if (rayHit.collider != null && rayHit.collider.tag == "Player" && !Boss)
             {
                 if (AttackStack == 1 && isAttacking == false) // 강격
                 {
